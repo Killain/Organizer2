@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="spinner">
+        <item>   </item>
+        <item>Work</item>
+        <item>Family</item>
+        <item>Sport</item>
+        <item>Plans</item>
+        <item>Important</item>
+    </array>
+</resources>

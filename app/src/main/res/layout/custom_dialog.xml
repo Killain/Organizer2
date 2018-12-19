@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relative_layout_dialog"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialog_textview_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Set a new task"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/dialog_edittext_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="9dp"
+        android:layout_marginLeft="9dp"
+        android:layout_marginTop="6dp"
+        android:hint="Set a new task"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:visibility="visible" />
+
+    <EditText
+        android:id="@+id/task_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="67dp"
+        android:background="@drawable/custom_rectangle"
+        android:hint="Write anything you want here..."
+        android:maxLength="140"
+        android:inputType="textCapSentences"
+        android:padding="13dp"
+        android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/cal_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/dialog_textview_header"
+            android:layout_alignStart="@+id/dialog_textview_header"
+            android:layout_alignTop="@+id/label_btn"
+            android:background="@drawable/ic_event_black_36dp"
+            android:text="Button" />
+
+        <ImageButton
+            android:id="@+id/label_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/set_btn"
+            android:layout_toEndOf="@+id/cal_btn"
+            android:layout_toRightOf="@+id/cal_btn"
+            android:layout_marginLeft="28dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/ic_label_black_36dp" />
+
+        <Button
+            android:id="@+id/cancel_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="bottom"
+            android:background="@null"
+            android:padding="16dp"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/set_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_toLeftOf="@+id/cancel_btn"
+            android:layout_toStartOf="@+id/cancel_btn"
+            android:background="@null"
+            android:padding="16dp"
+            android:text="Set" />
+
+</RelativeLayout>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/none_group"
+        android:title="(none)"/>
+
+    <item android:id="@+id/important_group"
+        android:title="Important"/>
+
+    <item android:id="@+id/family_group"
+        android:title="Family"/>
+
+    <item android:id="@+id/work_group"
+        android:title="Work"/>
+
+    <item android:id="@+id/sport_group"
+        android:title="Sport"/>
+
+</menu>
