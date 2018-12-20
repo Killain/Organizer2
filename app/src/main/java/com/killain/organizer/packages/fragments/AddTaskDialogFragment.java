@@ -1,7 +1,6 @@
 package com.killain.organizer.packages.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -18,12 +17,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.DatePicker;
 import com.killain.organizer.packages.database.AppDatabase;
+import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.tasks.Task;
 
@@ -41,16 +39,13 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
     public String task_type = null;
     private Calendar day_calendar, time_calendar;
     private int group_tag = 0;
-    private String header_result;
-    private String time;
     private TasksFragment _fragment;
-    private AppDatabase db;
-    private TaskDAO taskDAO;
+//    private AppDatabase db;
+//    private TaskDAO taskDAO;
     private DatePicker datePicker;
     private TimePickerDialog timePickerDialog;
-    private String dateString;
-    private String timeString;
     private SimpleDateFormat sdf_date, sdf_time;
+    private DataManager dataManager;
 
     public AddTaskDialogFragment() {
     }
@@ -79,8 +74,8 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        db = AppDatabase.getAppDatabase(getContext());
-        taskDAO = db.getTaskDAO();
+//        db = AppDatabase.getAppDatabase(getContext());
+//        taskDAO = db.getTaskDAO();
         day_calendar = Calendar.getInstance();
         time_calendar = Calendar.getInstance();
         sdf_date = new SimpleDateFormat("dd/MM/yyyy");
@@ -138,9 +133,11 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                 task.setTime(sdf_time.format(time_calendar.getTime()));
                 task.setNotificationShowed(false);
                 task.setCompleted(false);
-                taskDAO.addTask(task);
+                dataManager = new DataManager(getContext(), null);
+                dataManager.addTask(task);
+//                taskDAO.addTask(task);
                 _fragment.refreshFragment();
-                db.destroyInstance();
+//                db.destroyInstance();
                 dismiss();
                 break;
 

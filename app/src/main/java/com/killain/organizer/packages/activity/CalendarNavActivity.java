@@ -12,21 +12,27 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CalendarView;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.CalendarDayFragment;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class CalendarNavActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener, NavigationView.OnNavigationItemSelectedListener {
 
-    CalendarDayFragment fragment;
+    private CalendarDayFragment fragment;
     private CalendarView calendarView;
 
-    String xyear;
-    String xmonth;
-    String xday;
+    private String mYear;
+    private String mMonth;
+    private String mDay;
+
+    private long long_date;
+    private Date date;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +45,7 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
         CalendarView calendarView = findViewById(R.id.main_backdrop);
 
         fragment = (CalendarDayFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_cal_day);
+        createCalFragmentInstance(null);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -113,22 +120,31 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
     @Override
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
-        xyear = Integer.toString(year);
-        xmonth = Integer.toString(month);
-        xday = Integer.toString(dayOfMonth);
+        mYear = Integer.toString(year);
+        mMonth = Integer.toString(month);
+        mDay = Integer.toString(dayOfMonth);
 
-        long date = view.getDate();
-        Date date1 = new Date(date);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        createCalFragmentInstance(view);
+    }
 
+    private void createCalFragmentInstance(CalendarView view) {
+            fragment = CalendarDayFragment.newInstance(getDate(view));
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        fragment = CalendarDayFragment.newInstance(sdf.format(date1));
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_cal_day, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+    }
 
-        transaction.replace(R.id.fragment_cal_day, fragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-
+    private String getDate(CalendarView view) {
+        if (view != null) {
+            long_date = view.getDate();
+            date = new Date(long_date);
+            return sdf.format(date);
+        } else {
+            date = Calendar.getInstance().getTime();
+            return sdf.format(date);
+        }
     }
 
 }
