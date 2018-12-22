@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.interfaces.DBComponent;
+
 import com.killain.organizer.packages.interfaces.DaggerDBComponent;
 import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.tasks.Task;
@@ -27,7 +28,6 @@ public class DataManager {
 
     DBComponent component;
 
-
     public DataManager(Context context, ArrayList<Task> arrayList) {
         this.arrayList = arrayList;
         this.context = context;
@@ -35,14 +35,18 @@ public class DataManager {
         component.injectInManager(this);
     }
 
-    public ArrayList<Task> getTasksByState() {
-        arrayList = taskDAO.getAllTasksByState(true);
+    public ArrayList<Task> getTasksByState(boolean state) {
+        arrayList = taskDAO.getAllTasksByState(state);
         return (ArrayList<Task>) arrayList;
     }
 
     public ArrayList<Task> getTasksByDate() {
         arrayList = taskDAO.getAllTasksByDate(date);
         return (ArrayList<Task>) arrayList;
+    }
+
+    public void updateTask (Task task) {
+        taskDAO.updateTask(task);
     }
 
     public void addTask(Task task) {

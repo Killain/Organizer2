@@ -1,6 +1,5 @@
 package com.killain.organizer.packages.fragments;
 
-import android.app.NotificationManager;
 import android.content.Context;
 
 import android.os.Bundle;
@@ -21,6 +20,7 @@ import com.killain.organizer.packages.callbacks.SimpleItemTouchHelperCallback;
 import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.card.CardAdapter;
 import com.killain.organizer.R;
+import com.killain.organizer.packages.interactors.NotificationInteractor;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
 import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.task_watcher.TaskWatcher;
@@ -33,7 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import dagger.Module;
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -43,25 +44,23 @@ public class TasksFragment extends Fragment implements OnStartDragListener {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private int oldScrollYPostion = 0;
-
     private String mParam1;
     private String mParam2;
-
     private int count = 0;
-    private TextView noTaskTxt;
-    private FloatingActionMenu fam;
-    private Observable<Task> taskObservable;
-    private TaskWatcher taskWatcher;
+    public TextView noTaskTxt;
+    public FloatingActionMenu fam;
+//    public Observable<Task> taskObservable;
+//    public TaskWatcher taskWatcher;
     public RelativeLayout relative_layout;
-    private FloatingActionButton fab_simple_task, fab_big_task;
-    private ScrollView scrollView;
+    public FloatingActionButton fab_simple_task, fab_big_task;
+    public ScrollView scrollView;
     private ItemTouchHelper mItemTouchHelper;
-    public ArrayList<Task> arrayList;
+//    public ArrayList<Task> arrayList;
     public RecyclerView recyclerView;
     public CardAdapter cardAdapter;
-    private AppDatabase db;
+//    private AppDatabase db;
     private TasksFragment fragment;
-    private TaskDAO taskDAO;
+//    private TaskDAO taskDAO;
     private int cycle = 1;
     private Date date;
 
@@ -81,9 +80,9 @@ public class TasksFragment extends Fragment implements OnStartDragListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        db = AppDatabase.getAppDatabase(getContext());
-        taskDAO = db.getTaskDAO();
-        taskWatcher = getObserver();
+//        db = AppDatabase.getAppDatabase(getContext());
+//        taskDAO = db.getTaskDAO();
+//        taskWatcher = getObserver();
         fragment = TasksFragment.this;
     }
 
@@ -94,15 +93,15 @@ public class TasksFragment extends Fragment implements OnStartDragListener {
 
         noTaskTxt = RootView.findViewById(R.id.no_task_txt);
 
-        getTasksFromDb();
+//        getTasksFromDb();
 
-        taskObservable = convertArrayListToObserver(arrayList);
-
-        taskObservable.subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
-                .delay(600, TimeUnit.MILLISECONDS)
-                .repeat()
-                .subscribe(taskWatcher);
+//        taskObservable = convertArrayListToObserver(arrayList);
+//
+//        taskObservable.subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.single())
+//                .delay(600, TimeUnit.MILLISECONDS)
+//                .repeat()
+//                .subscribe(taskWatcher);
 
         FloatingActionMenu fam = RootView.findViewById(R.id.fam_tasks);
 
@@ -112,7 +111,10 @@ public class TasksFragment extends Fragment implements OnStartDragListener {
         scrollView = RootView.findViewById(R.id.tasks_frg_scroll_view);
         relative_layout = RootView.findViewById(R.id.parent_layout_tasks_fragment);
         recyclerView = RootView.findViewById(R.id.recycler_fragment_tasks);
-        cardAdapter = new CardAdapter(getContext(), arrayList, this, this);
+//        cardAdapter = new CardAdapter(getContext(), this, this);
+        cardAdapter = new CardAdapter().newInstance(getContext(), this, this);
+        NotificationInteractor notificationManager = new NotificationInteractor(cardAdapter.getArrayList(), getContext());
+
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(cardAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
@@ -171,88 +173,91 @@ public class TasksFragment extends Fragment implements OnStartDragListener {
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-    public ArrayList<Task> getTasksFromDb() {
-        arrayList = (ArrayList<Task>) taskDAO.getAllTasksByState(false);
-        if (arrayList.size() == 0 ) {
-            noTaskTxt.setVisibility(View.VISIBLE);
-        }
-        return arrayList;
-    }
+//    public ArrayList<Task> getTasksFromDb() {
+//        arrayList = (ArrayList<Task>) taskDAO.getAllTasksByState(false);
+//        if (arrayList.size() == 0 ) {
+//            noTaskTxt.setVisibility(View.VISIBLE);
+//        }
+//        return arrayList;
+//    }
 
-    public void createNotification(String title, String message, Task task) {
-
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        String raw = task.getDate();
-        try {
-            date = sdf.parse(raw);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        if (task.isNotificationShowed() == false) {
-            NotificationCompat.Builder b = new NotificationCompat.Builder(this.getContext());
-            b.setAutoCancel(true)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
-                    .setWhen(date.getTime())
-                    .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
-                    .setTicker("{Ticker string}")
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setContentInfo("INFO");
-
-            NotificationManager nm = (NotificationManager) this.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.notify(count, b.build());
-            task.setNotificationShowed(true);
-            taskDAO.updateTask(task);
-            count++;
-        }
-    }
+    //TODO: backup для уведомлений
+//    public void createNotification(String title, String message, Task task) {
+//
+//            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+//            String raw = task.getDate();
+//            try {
+//                date = sdf.parse(raw);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//
+//            if (task.isNotificationShowed() == false) {
+//                NotificationCompat.Builder b = new NotificationCompat.Builder(this.getContext());
+//                b.setAutoCancel(true)
+//                        .setDefaults(NotificationCompat.DEFAULT_ALL)
+//                        .setWhen(date.getTime())
+//                        .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+//                        .setTicker("{Ticker string}")
+//                        .setContentTitle(title)
+//                        .setContentText(message)
+//                        .setContentInfo("INFO");
+//
+//                NotificationInteractor nm = (NotificationInteractor) this.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+//                nm.notify(count, b.build());
+//                task.setNotificationShowed(true);
+//
+////            taskDAO.updateTask(task);
+//                count++;
+//            }
+//    }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        db.destroyInstance();
+//        db.destroyInstance();
     }
 
-    private Observable<Task> convertArrayListToObserver(ArrayList<Task> arrayList) {
-       return taskObservable.fromIterable(arrayList);
-    }
-
-    private TaskWatcher getObserver() {
-        return new TaskWatcher(){
-            @Override
-            public void onSubscribe(Disposable d) {
-                super.onSubscribe(d);
-            }
-
-            @Override
-            public void onNext(Task task) {
-                createNotification(task.getTitle(), task.getTask_string(), task);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                super.onError(e);
-            }
-
-            @Override
-            public void onComplete() {
-                super.onComplete();
-            }
-        };
-
-    }
+//    private Observable<Task> convertArrayListToObserver(ArrayList<Task> arrayList) {
+//       return taskObservable.fromIterable(arrayList);
+//    }
+//
+//    private TaskWatcher getObserver() {
+//        return new TaskWatcher(){
+//            @Override
+//            public void onSubscribe(Disposable d) {
+//                super.onSubscribe(d);
+//            }
+//
+//            @Override
+//            public void onNext(Task task) {
+//                createNotification(task.getTitle(), task.getTask_string(), task);
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                super.onError(e);
+//            }
+//
+//            @Override
+//            public void onComplete() {
+//                super.onComplete();
+//            }
+//        };
+//
+//    }
 
     public void refreshFragment() {
-        getActivity().runOnUiThread(() -> cardAdapter.refreshItems(getTasksFromDb()));
+//        getActivity().runOnUiThread(() -> cardAdapter.newInstance(getContext(), this, this));
+        getActivity().runOnUiThread(() -> cardAdapter.notifyDataSetChanged());
     }
 
-    public void updateArrayList(ArrayList<Task> tasks) {
-        this.arrayList = tasks;
-        if (arrayList.size() == 0) {
-            noTaskTxt.setVisibility(View.VISIBLE);
-        } else {
-            noTaskTxt.setVisibility(View.GONE);
-        }
-    }
+//    public void updateArrayList(ArrayList<Task> tasks) {
+//        this.arrayList = tasks;
+//        if (arrayList.size() == 0) {
+//            noTaskTxt.setVisibility(View.VISIBLE);
+//        } else {
+//            noTaskTxt.setVisibility(View.GONE);
+//        }
+//    }
 }
