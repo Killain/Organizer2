@@ -20,9 +20,7 @@ import android.widget.TextView;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.DatePicker;
-import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.tasks.Task;
 
 import java.text.SimpleDateFormat;
@@ -136,7 +134,7 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                 dataManager = new DataManager(getContext(), null);
                 dataManager.addTask(task);
 //                taskDAO.addTask(task);
-                _fragment.refreshFragment();
+                _fragment.refreshAdapterOnAdd();
 //                db.destroyInstance();
                 dismiss();
                 break;

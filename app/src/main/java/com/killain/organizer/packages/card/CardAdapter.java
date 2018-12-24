@@ -21,6 +21,7 @@ import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.fragments.CalendarDayFragment;
 import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.interactors.DataManager;
+import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
@@ -40,6 +41,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
     private List<Task> arrayList;
     private ArrayList<SubTask> subTaskArrayList;
     private OnStartDragListener mDragStartListener;
+    private IAdapterRefresher iAdapterRefresher;
     private Task task_buffer;
     private int size;
     private AppDatabase db;
@@ -52,45 +54,31 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
     public CardAdapter(Context context,
                        OnStartDragListener dragListener,
-                       TasksFragment tasksFragment) {
+                       IAdapterRefresher iAdapterRefresher) {
 
         this.context = context;
         mDragStartListener = dragListener;
-        this.fragment = tasksFragment;
+        this.iAdapterRefresher = iAdapterRefresher;
         dataManager = new DataManager(context, null);
         arrayList = dataManager.getTasksByState(false);
     }
 
 //    public CardAdapter(Context context,
-//                       ArrayList<Task> arrayList,
-//                       OnStartDragListener dragListener,
-//                       TasksFragment tasksFragment) {
+//                       OnStartDragListener dragLlistener,
+//                       CalendarDayFragment calendarDayFragment) {
 //
 //        this.context = context;
-//        this.arrayList = arrayList;
-//        mDragStartListener = dragListener;
-//        this.fragment = tasksFragment;
+//        mDragStartListener = dragLlistener;
+//        cal_fragment = calendarDayFragment;
 //    }
-
-
-    public CardAdapter(Context context,
-                       ArrayList<Task> arrayList,
-                       OnStartDragListener dragLlistener,
-                       CalendarDayFragment calendarDayFragment) {
-
-        this.context = context;
-        this.arrayList = arrayList;
-        mDragStartListener = dragLlistener;
-        cal_fragment = calendarDayFragment;
-    }
 
     public CardAdapter() {}
 
-    public CardAdapter newInstance(Context context,
+    public static CardAdapter newInstance(Context context,
                                    OnStartDragListener dragListener,
-                                   TasksFragment tasksFragment) {
+                                   IAdapterRefresher iAdapterRefresher) {
 
-        return new CardAdapter(context, dragListener, tasksFragment);
+        return new CardAdapter(context, dragListener, iAdapterRefresher);
     }
 
     @NonNull
@@ -99,10 +87,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_card, parent, false);
         CustomViewHolder cvh = new CustomViewHolder(v);
-
-//        db = AppDatabase.getAppDatabase(context);
-//        taskDAO = db.getTaskDAO();
-//        subTaskDAO = db.getSubTaskDAO();
 
         return cvh;
     }
@@ -126,6 +110,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         }
 
         holder.expand_area.setVisibility(View.GONE);
+
         holder.extra_expand_area.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener(v -> {
@@ -159,20 +144,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
         holder.delete_btn.setOnClickListener((v) -> {
             removeAt(holder.getAdapterPosition(), task);
-//            taskDAO.deleteTask(task);
             dataManager.deleteTask(task);
-            fragment.refreshFragment();
         });
 
         holder.done_btn.setOnClickListener(v -> {
             task.setCompleted(true);
             dataManager.updateTask(task);
             removeAt(position, task);
-//            fragment.refreshFragment();
         });
 
         if (fragment != null) {
-//            fragment.refreshFragment();
         }
     }
 
@@ -201,28 +182,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
     public void removeAt(int position, Task t) {
         task = t;
         arrayList.remove(position);
-//        taskDAO.deleteTask(task);
         dataManager.deleteTask(task);
-        fragment.refreshFragment();
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, arrayList.size());
-        notifyDataSetChanged();
+        iAdapterRefresher.refreshAdapterOnDelete(position);
         refreshItems();
     }
 
     public void refreshItems() {
-        ArrayList<Task> secondaryArray = new ArrayList<>();
-        secondaryArray.addAll(arrayList);
-        arrayList.clear();
-        arrayList.addAll(secondaryArray);
-        notifyDataSetChanged();
-//        fragment.refreshFragment();
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
-//        db.destroyInstance();
+        arrayList = dataManager.getTasksByState(false);
     }
 
     public ArrayList<Task> getArrayList() {

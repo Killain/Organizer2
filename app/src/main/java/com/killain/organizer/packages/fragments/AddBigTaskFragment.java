@@ -113,7 +113,7 @@ public class AddBigTaskFragment extends Fragment {
                         subTaskDAO.addSubTask(subTask);
                     }
                 }
-            fragment.refreshFragment();
+//            fragment.refreshAdapterOnAdd();
             android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_out, R.anim.slide_up);
             transaction.remove(this);
