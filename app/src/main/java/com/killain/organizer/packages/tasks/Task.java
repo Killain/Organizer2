@@ -33,6 +33,9 @@ public class Task {
     @ColumnInfo(name = "is_notification_showed")
     private boolean isNotificationShowed;
 
+    @ColumnInfo(name = "is_deleted")
+    private boolean isDeleted;
+
     @Ignore
     private int list_id;
 
@@ -109,5 +112,13 @@ public class Task {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

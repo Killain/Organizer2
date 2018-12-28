@@ -94,4 +94,9 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
     public void refreshAdapterOnDelete(int position) {
         cardAdapter.notifyItemRemoved(position);
     }
+
+    public void reloadTasksOnDate(String date) {
+        cardAdapter.reloadItemsByDate(date);
+        cardAdapter.notifyDataSetChanged();
+    }
 }

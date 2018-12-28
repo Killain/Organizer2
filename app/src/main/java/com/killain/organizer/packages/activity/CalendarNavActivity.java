@@ -45,7 +45,6 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
         CalendarView calendarView = findViewById(R.id.main_backdrop);
 
         fragment = (CalendarDayFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_cal_day);
-        createCalFragmentInstance(null);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -124,16 +123,7 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
         mMonth = Integer.toString(month);
         mDay = Integer.toString(dayOfMonth);
 
-        createCalFragmentInstance(view);
-    }
-
-    private void createCalFragmentInstance(CalendarView view) {
-            fragment = CalendarDayFragment.newInstance(getDate(view));
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.fragment_cal_day, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+        fragment.reloadTasksOnDate(getDate(view));
     }
 
     private String getDate(CalendarView view) {

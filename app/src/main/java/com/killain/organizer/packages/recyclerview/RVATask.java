@@ -11,19 +11,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.killain.organizer.R;
+import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.tasks.SubTask;
+import com.killain.organizer.packages.tasks.Task;
 
 import java.util.ArrayList;
 
 public class RVATask extends RecyclerView.Adapter<RVATask.CustomViewHolder> {
 
     private ArrayList<SubTask> arrayList;
-    private Context context;
+    public Context context;
+    public DataManager dataManager;
 
-    public RVATask(Context context, ArrayList<SubTask> arrayList) {
+    public RVATask(Context context, Task task) {
         this.context = context;
-        this.arrayList = arrayList;
+        dataManager = new DataManager(context, null);
+        arrayList = dataManager.getSubTasksByReference(task.getTitle());
     }
 
     @NonNull

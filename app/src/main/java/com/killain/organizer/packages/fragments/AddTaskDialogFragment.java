@@ -31,15 +31,12 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
 
     public Context context;
     private EditText user_txt;
-    private Button set, cancel;
     private TextView group_textview, header, header_editable;
-    private ImageButton label, datepicker_btn;
+    private ImageButton label, datepicker_btn, set, cancel;
     public String task_type = null;
     private Calendar day_calendar, time_calendar;
     private int group_tag = 0;
     private TasksFragment _fragment;
-//    private AppDatabase db;
-//    private TaskDAO taskDAO;
     private DatePicker datePicker;
     private TimePickerDialog timePickerDialog;
     private SimpleDateFormat sdf_date, sdf_time;
@@ -72,8 +69,6 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        db = AppDatabase.getAppDatabase(getContext());
-//        taskDAO = db.getTaskDAO();
         day_calendar = Calendar.getInstance();
         time_calendar = Calendar.getInstance();
         sdf_date = new SimpleDateFormat("dd/MM/yyyy");
@@ -133,9 +128,7 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                 task.setCompleted(false);
                 dataManager = new DataManager(getContext(), null);
                 dataManager.addTask(task);
-//                taskDAO.addTask(task);
                 _fragment.refreshAdapterOnAdd();
-//                db.destroyInstance();
                 dismiss();
                 break;
 
@@ -215,7 +208,6 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                 group_textview.setText("Work");
                 group_textview.setVisibility(View.VISIBLE);
                 return true;
-
         }
         return true;
     }

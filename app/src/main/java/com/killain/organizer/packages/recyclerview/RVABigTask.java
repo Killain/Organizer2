@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.fragments.AddBigTaskFragment;
+import com.killain.organizer.packages.interactors.DataManager;
+import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.SubTaskDAO;
 import com.killain.organizer.packages.tasks.SubTask;
 
@@ -29,11 +31,15 @@ import io.reactivex.Observable;
 public class RVABigTask extends RecyclerView.Adapter<RVABigTask.ViewHolder>{
 
     private Context context;
+    private IAdapterRefresher iAdapterRefresher;
     private ArrayList<SubTask> arrayList;
     private AddBigTaskFragment fragment;
+    private DataManager dataManager;
+    private int index = 0;
 
-    public RVABigTask(Context context) {
+    public RVABigTask(Context context ) {
         this.context = context;
+        this.iAdapterRefresher = iAdapterRefresher;
         arrayList = new ArrayList<>();
     }
 
@@ -42,15 +48,16 @@ public class RVABigTask extends RecyclerView.Adapter<RVABigTask.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
         RVABigTask.ViewHolder vh = new RVABigTask.ViewHolder(v);
+        dataManager = new DataManager(context, null);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        Toast.makeText(context, "VH Pos:" + position, Toast.LENGTH_SHORT).show();
-
         SubTask item = arrayList.get(position);
+
+        holder.recycler_edittext.setText(item.getText());
 
         if (arrayList.size() > 0) {
             fragment.save_btn.setVisibility(View.VISIBLE);
@@ -73,12 +80,12 @@ public class RVABigTask extends RecyclerView.Adapter<RVABigTask.ViewHolder>{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                item.setText(s.toString());
+                arrayList.get(position).setText(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-               item.setText(s.toString());
+               arrayList.get(position).setText(s.toString());
             }
         });
 
@@ -88,7 +95,8 @@ public class RVABigTask extends RecyclerView.Adapter<RVABigTask.ViewHolder>{
     public void addToRV() {
         SubTask subTask = new SubTask();
         arrayList.add(subTask);
-        notifyItemInserted(arrayList.size());
+        fragment.refreshAdapterOnAdd(arrayList.size() - 1);
+        index++;
     }
 
     @Override
@@ -110,9 +118,22 @@ public class RVABigTask extends RecyclerView.Adapter<RVABigTask.ViewHolder>{
 
     public void removeAt(int position) {
         arrayList.remove(position);
-        notifyItemRemoved(position);
-//        notifyItemRangeChanged(position, arrayList.size());
-        notifyDataSetChanged();
+        fragment.refreshAdapterOnDelete(position);
+    }
+
+    public void setSubTasksReference(String reference) {
+        for (SubTask subTask : arrayList) {
+            subTask.setReference(reference);
+            dataManager.addSubTask(subTask);
+        }
+    }
+
+    private void refreshItems(ArrayList<SubTask> array) {
+        ArrayList<SubTask> secondary = new ArrayList<>();
+        secondary.addAll(array);
+        arrayList.clear();
+        arrayList.addAll(secondary);
+        fragment.refreshAdapterOnAdd(index);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

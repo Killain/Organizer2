@@ -44,12 +44,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
     private IAdapterRefresher iAdapterRefresher;
     private Task task_buffer;
     private int size;
-    private AppDatabase db;
-    private TaskDAO taskDAO;
-    private SubTaskDAO subTaskDAO;
     private Task task;
-    private TasksFragment fragment;
-    private CalendarDayFragment cal_fragment;
     private DataManager dataManager;
 
     public CardAdapter(Context context,
@@ -60,17 +55,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         mDragStartListener = dragListener;
         this.iAdapterRefresher = iAdapterRefresher;
         dataManager = new DataManager(context, null);
-        arrayList = dataManager.getTasksByState(false);
+        arrayList = dataManager.getTasksByState(false, false);
     }
-
-//    public CardAdapter(Context context,
-//                       OnStartDragListener dragLlistener,
-//                       CalendarDayFragment calendarDayFragment) {
-//
-//        this.context = context;
-//        mDragStartListener = dragLlistener;
-//        cal_fragment = calendarDayFragment;
-//    }
 
     public CardAdapter() {}
 
@@ -99,8 +85,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         task_buffer = task;
 
         if (task.getTitle() != null) {
-            subTaskArrayList = (ArrayList<SubTask>) subTaskDAO.getSubTasksByReference(task.getTitle());
-            RVATask rvaTask = new RVATask(context, subTaskArrayList);
+            subTaskArrayList = dataManager.getSubTasksByReference(task.getTitle());
+            RVATask rvaTask = new RVATask(context, task);
             holder.recycler_view.setVisibility(View.VISIBLE);
             holder.recycler_view.setAdapter(rvaTask);
             holder.card_text_upper.setText(task.getTitle());
@@ -150,11 +136,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         holder.done_btn.setOnClickListener(v -> {
             task.setCompleted(true);
             dataManager.updateTask(task);
+            arrayList.remove(position);
             removeAt(position, task);
+            iAdapterRefresher.refreshAdapterOnDelete(position);
+            refreshItems();
         });
-
-        if (fragment != null) {
-        }
     }
 
     @Override
@@ -174,21 +160,24 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
     @Override
     public void onItemDismiss(int position) {
-        removeAt(position, task);
-        notifyItemRemoved(position);
-//        fragment.updateArrayList((ArrayList<Task>) arrayList);
+        removeAt(position, arrayList.get(position));
     }
 
     public void removeAt(int position, Task t) {
         task = t;
+        task.setDeleted(true);
         arrayList.remove(position);
-        dataManager.deleteTask(task);
+        dataManager.updateTask(task);
         iAdapterRefresher.refreshAdapterOnDelete(position);
-        refreshItems();
+//        refreshItems();
     }
 
     public void refreshItems() {
-        arrayList = dataManager.getTasksByState(false);
+        arrayList = dataManager.getTasksByState(false, false);
+    }
+
+    public void reloadItemsByDate(String date) {
+        arrayList = dataManager.taskDAO.getAllTasksByDate(date);
     }
 
     public ArrayList<Task> getArrayList() {

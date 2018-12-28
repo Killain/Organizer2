@@ -122,5 +122,4 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
     public void refreshAdapterOnDelete(int position) {
         cardAdapter.notifyItemRemoved(position);
     }
-
 }

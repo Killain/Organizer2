@@ -27,8 +27,8 @@ public interface TaskDAO {
     @Query("SELECT * FROM task WHERE task_date = :date")
     List<Task> getAllTasksByDate(String date);
 
-    @Query("SELECT * FROM task WHERE task_is_completed == :state")
-    List<Task> getAllTasksByState(boolean state);
+    @Query("SELECT * FROM task WHERE task_is_completed == :isCompleted AND is_deleted == :isDeleted")
+    List<Task> getAllTasksByState(boolean isCompleted, boolean isDeleted);
 
     //TODO: сделать сортировку
 }
