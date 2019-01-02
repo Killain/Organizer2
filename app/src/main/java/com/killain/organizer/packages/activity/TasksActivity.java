@@ -13,18 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.killain.organizer.R;
+import com.killain.organizer.packages.ToolbarEnum;
 import com.killain.organizer.packages.database.AppDatabase;
+import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.interfaces.TaskDAO;
 
 public class TasksActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Toolbar toolbar, custom_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -48,7 +53,11 @@ public class TasksActivity extends AppCompatActivity implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            //TODO: не работает
             super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+                setNewToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
+            }
         }
     }
 
@@ -95,4 +104,25 @@ public class TasksActivity extends AppCompatActivity implements NavigationView.O
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void setNewToolbar(ToolbarEnum toolbarEnum) {
+
+        switch (toolbarEnum) {
+
+            case TASK_DIALOG_TOOLBAR:
+                toolbar.setVisibility(View.GONE);
+                custom_toolbar = findViewById(R.id.custom_toolbar);
+                custom_toolbar.setVisibility(View.VISIBLE);
+                break;
+
+            case NAVIGATION_TOOLBAR:
+                custom_toolbar.setVisibility(View.GONE);
+                toolbar.setVisibility(View.VISIBLE);
+                break;
+
+            default:
+                break;
+        }
+    }
+
 }

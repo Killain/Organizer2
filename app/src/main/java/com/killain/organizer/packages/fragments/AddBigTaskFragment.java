@@ -12,11 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.killain.organizer.R;
-import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.interfaces.IAdapterRefresher;
-import com.killain.organizer.packages.interfaces.SubTaskDAO;
-import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.recyclerview.RVABigTask;
 import com.killain.organizer.packages.tasks.SubTask;
 import com.killain.organizer.packages.tasks.Task;
@@ -24,7 +20,6 @@ import com.killain.organizer.packages.tasks.Task;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class AddBigTaskFragment extends Fragment  {
 
@@ -107,8 +102,8 @@ public class AddBigTaskFragment extends Fragment  {
                 task.setDeleted(false);
                 dataManager.addTask(task);
                 adapter.setSubTasksReference(big_task_title.getText().toString());
-//                arrayList = adapter.getArrayList();
-                }
+            }
+
             android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_out, R.anim.slide_up);
             transaction.remove(this);

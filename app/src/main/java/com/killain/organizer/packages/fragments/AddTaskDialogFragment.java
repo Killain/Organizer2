@@ -1,18 +1,19 @@
 package com.killain.organizer.packages.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.DisplayMetrics;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
@@ -20,13 +21,15 @@ import android.widget.TextView;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.DatePicker;
+import com.killain.organizer.packages.ToolbarEnum;
+import com.killain.organizer.packages.activity.TasksActivity;
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.tasks.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment implements
+public class AddTaskDialogFragment extends Fragment implements
         View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
     public Context context;
@@ -45,24 +48,22 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
     public AddTaskDialogFragment() {
     }
 
-    //TODO: передать listener через Bundle
     public void setListener(TasksFragment fragment) {
         _fragment = fragment;
     }
 
-
     @Override
     public void onResume() {
-        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-        int width = displayMetrics.widthPixels;
-        int height = displayMetrics.heightPixels;
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(getDialog().getWindow().getAttributes());
-        lp.height = height / 2;
-        lp.width = width;
-
-        getDialog().getWindow().setAttributes(lp);
+//        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+//        int width = displayMetrics.widthPixels;
+//        int height = displayMetrics.heightPixels;
+//
+//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+//        lp.copyFrom(getDialog().getWindow().getAttributes());
+//        lp.height = height / 2;
+//        lp.width = width;
+//
+//        getDialog().getWindow().setAttributes(lp);
         super.onResume();
     }
 
@@ -81,29 +82,31 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
 
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
 
+        _fragment.changeToolbar(ToolbarEnum.TASK_DIALOG_TOOLBAR);
+
         datepicker_btn = view.findViewById(R.id.cal_btn);
         header = view.findViewById(R.id.dialog_textview_header);
         header_editable = view.findViewById(R.id.dialog_edittext_header);
-        set = view.findViewById(R.id.set_btn);
+        set = getActivity().findViewById(R.id.set_btn);
         cancel = view.findViewById(R.id.cancel_btn);
         user_txt = view.findViewById(R.id.task_edit_text);
 //        group_textview = view.findViewById(R.id.dialog_group_textview);
         label = view.findViewById(R.id.label_btn);
-
-        switch (task_type) {
-            case "simple":
-                header_editable.setVisibility(View.GONE);
-                header.setVisibility(View.VISIBLE);
-                break;
-
-            case "big":
-                header_editable.setVisibility(View.VISIBLE);
-                header.setVisibility(View.GONE);
-                break;
-
-            default:
-                break;
-        }
+//
+//        switch (task_type) {
+//            case "simple":
+//                header_editable.setVisibility(View.GONE);
+//                header.setVisibility(View.VISIBLE);
+//                break;
+//
+//            case "big":
+//                header_editable.setVisibility(View.VISIBLE);
+//                header.setVisibility(View.GONE);
+//                break;
+//
+//            default:
+//                break;
+//        }
 
         set.setOnClickListener(this);
         cancel.setOnClickListener(this);
@@ -129,11 +132,13 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                 dataManager = new DataManager(getContext(), null);
                 dataManager.addTask(task);
                 _fragment.refreshAdapterOnAdd();
-                dismiss();
+                changeToParentFragment();
+                _fragment.changeToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
                 break;
 
             case R.id.cancel_btn:
-                dismiss();
+                changeToParentFragment();
+                _fragment.changeToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
                 break;
 
             case R.id.cal_btn:
@@ -161,6 +166,7 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
                             time_calendar.get(Calendar.MINUTE), true);
                     timePickerDialog.show();
                 });
+                break;
 
             default:
                 break;
@@ -168,10 +174,10 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
     }
 
     public void showGroupPopup(View view) {
-        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-        popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.group_task_popup_menu);
-        popupMenu.show();
+//        PopupMenu popupMenu = new PopupMenu(getContext(), view);
+//        popupMenu.setOnMenuItemClickListener(this);
+//        popupMenu.inflate(R.menu.group_task_popup_menu);
+//        popupMenu.show();
     }
 
     @Override
@@ -211,4 +217,13 @@ public class AddTaskDialogFragment extends android.support.v4.app.DialogFragment
         }
         return true;
     }
+
+    private void changeToParentFragment() {
+        getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+//    private void toolbarSetter(ToolbarEnum toolbarEnum) {
+//        Activity activity = (TasksActivity) getContext();
+//        ((TasksActivity) activity).setNewToolbar(toolbarEnum);
+//    }
 }

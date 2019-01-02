@@ -10,8 +10,6 @@ import com.killain.organizer.packages.tasks.SubTask;
 
 import java.util.List;
 
-//TODO: убрать ненужные методы
-
 @Dao
 public interface SubTaskDAO {
 

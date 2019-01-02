@@ -4,7 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/relative_layout_dialog"
-    android:orientation="vertical">
+    android:clickable="true"
+    android:orientation="vertical"
+    android:focusable="true"
+    android:background="@color/colorWhite">
 
     <TextView
         android:id="@+id/dialog_textview_header"
@@ -63,12 +66,6 @@
             android:background="@drawable/ic_close"
             android:layout_margin="8dp"/>
 
-        <ImageButton
-            android:id="@+id/set_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_tick"
-            android:layout_margin="8dp"/>
 
     </LinearLayout>
 
