@@ -21,7 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CalendarNavActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener, NavigationView.OnNavigationItemSelectedListener {
+public class CalendarNavActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private CalendarDayFragment fragment;
     private CalendarView calendarView;
@@ -33,6 +34,9 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
     private long long_date;
     private Date date;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private String newdate;
+    private int secondaryMonth;
+    private int secondaryDay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,10 +124,24 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
     public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 
         mYear = Integer.toString(year);
-        mMonth = Integer.toString(month);
+        secondaryMonth = month + 1;
+        secondaryDay = dayOfMonth;
+        mMonth = Integer.toString(secondaryMonth);
         mDay = Integer.toString(dayOfMonth);
 
-        fragment.reloadTasksOnDate(getDate(view));
+        //TODO: сделать нормально
+
+        if (secondaryMonth <= 9) {
+            mMonth = "0" + secondaryMonth;
+        }
+
+        if (dayOfMonth <= 9) {
+            mDay = "0" + secondaryDay;
+        }
+
+        newdate = mDay + "/" + mMonth + "/" + mYear;
+
+        fragment.reloadTasksOnDate(newdate);
     }
 
     private String getDate(CalendarView view) {

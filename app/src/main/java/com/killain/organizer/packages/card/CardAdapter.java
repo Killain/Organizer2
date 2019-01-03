@@ -17,16 +17,11 @@ import android.widget.TextView;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.killain.organizer.R;
-import com.killain.organizer.packages.database.AppDatabase;
-import com.killain.organizer.packages.fragments.CalendarDayFragment;
-import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
-import com.killain.organizer.packages.interfaces.SubTaskDAO;
-import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.recyclerview.RVATask;
 import com.killain.organizer.packages.tasks.SubTask;
 import com.killain.organizer.packages.tasks.Task;
@@ -55,7 +50,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         mDragStartListener = dragListener;
         this.iAdapterRefresher = iAdapterRefresher;
         dataManager = new DataManager(context, null);
-        arrayList = dataManager.getTasksByState(false, false);
+//        arrayList = dataManager.getTasksByState(false, false);
     }
 
     public CardAdapter() {}
@@ -93,6 +88,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         } else {
             holder.card_text_upper.setText(task.getTask_string());
             holder.expanded_text_big_task.setVisibility(View.GONE);
+            holder.card_date.setText(task.getDate());
         }
 
         holder.expand_area.setVisibility(View.GONE);
@@ -139,7 +135,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
             arrayList.remove(position);
             removeAt(position, task);
             iAdapterRefresher.refreshAdapterOnDelete(position);
-            refreshItems();
+            loadItemsByState();
         });
     }
 
@@ -163,21 +159,21 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         removeAt(position, arrayList.get(position));
     }
 
-    public void removeAt(int position, Task t) {
+    private void removeAt(int position, Task t) {
         task = t;
         task.setDeleted(true);
         arrayList.remove(position);
         dataManager.updateTask(task);
         iAdapterRefresher.refreshAdapterOnDelete(position);
-//        refreshItems();
+//        loadItemsByState();
     }
 
-    public void refreshItems() {
+    public void loadItemsByState() {
         arrayList = dataManager.getTasksByState(false, false);
     }
 
-    public void reloadItemsByDate(String date) {
-        arrayList = dataManager.taskDAO.getAllTasksByDate(date);
+    public void loadItemsByDate(String date) {
+        arrayList = dataManager.getAllTasksByDate(date);
     }
 
     public ArrayList<Task> getArrayList() {
@@ -188,7 +184,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
         public final RelativeLayout expand_area;
         public final TextView card_text_upper;
-        public final TextView expanded_text_big_task;
+        public final TextView expanded_text_big_task, card_date;
         public final ImageView handler;
         public final ImageButton delete_btn;
         public final RelativeLayout extra_expand_area;
@@ -206,6 +202,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
             expanded_text_big_task = itemView.findViewById(R.id.big_task_expanded_text);
             handler = itemView.findViewById(R.id.img_view_drag);
             extra_expand_area = itemView.findViewById(R.id.extra_expanded_bottom);
+            card_date = itemView.findViewById(R.id.card_date);
         }
 
         @Override

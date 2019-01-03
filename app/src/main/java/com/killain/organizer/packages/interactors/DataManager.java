@@ -47,11 +47,6 @@ public class DataManager {
         return (ArrayList<Task>) taskList;
     }
 
-    public ArrayList<Task> getTasksByDate() {
-        taskList = taskDAO.getAllTasksByDate(date);
-        return (ArrayList<Task>) taskList;
-    }
-
     public void updateTask (Task task) {
         taskDAO.updateTask(task);
     }
@@ -75,5 +70,10 @@ public class DataManager {
     public ArrayList<SubTask> getSubTasksByReference(String reference) {
         subTaskList = subTaskDAO.getSubTasksByReference(reference);
         return (ArrayList<SubTask>) subTaskList;
+    }
+
+    public ArrayList<Task> getAllTasksByDate(String date) {
+        taskList = taskDAO.getAllTasksByDate(date);
+        return (ArrayList<Task>) taskList;
     }
 }

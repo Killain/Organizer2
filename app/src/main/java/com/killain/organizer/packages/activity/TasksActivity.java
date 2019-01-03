@@ -53,11 +53,10 @@ public class TasksActivity extends AppCompatActivity implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //TODO: не работает
-            super.onBackPressed();
             if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
                 setNewToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
             }
+            super.onBackPressed();
         }
     }
 
@@ -124,5 +123,4 @@ public class TasksActivity extends AppCompatActivity implements NavigationView.O
                 break;
         }
     }
-
 }

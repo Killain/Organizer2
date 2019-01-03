@@ -2,24 +2,21 @@ package com.killain.organizer.packages.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CalendarView;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.callbacks.SimpleItemTouchHelperCallback;
 import com.killain.organizer.packages.card.CardAdapter;
-import com.killain.organizer.packages.database.AppDatabase;
 import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
-import com.killain.organizer.packages.interfaces.TaskDAO;
-import com.killain.organizer.packages.tasks.Task;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class CalendarDayFragment extends Fragment implements OnStartDragListener, IAdapterRefresher {
 
@@ -34,8 +31,11 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
     private ItemTouchHelper mItemTouchHelper;
 
     private CardAdapter cardAdapter;
-    private long longDate;
+    private String todayString;
     private RecyclerView recyclerView;
+
+    private Date date;
+    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public CalendarDayFragment() {
     }
@@ -46,6 +46,7 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
         args.putString(ARG_DATE, date);
 
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -56,6 +57,8 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
             date_param = getArguments().getString(ARG_DATE);
         }
 
+        date = Calendar.getInstance().getTime();
+        todayString = sdf.format(date);
     }
 
     @Override
@@ -66,6 +69,7 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
 
         recyclerView = view.findViewById(R.id.recycler_calendar_fragment);
         cardAdapter = CardAdapter.newInstance(getContext(), this, this);
+        cardAdapter.loadItemsByDate(todayString);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(cardAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
@@ -79,15 +83,9 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
         mItemTouchHelper.startDrag(viewHolder);
     }
 
-//    public void setArgDate(String date) {
-//        date_param = date;
-//        FragmentTransaction ft = getFragmentManager().beginTransaction();
-//        ft.detach(this).attach(this).commit();
-//    }
-
     @Override
     public void refreshAdapterOnAdd() {
-        cardAdapter.refreshItems();
+        cardAdapter.loadItemsByState();
     }
 
     @Override
@@ -96,7 +94,7 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
     }
 
     public void reloadTasksOnDate(String date) {
-        cardAdapter.reloadItemsByDate(date);
+        cardAdapter.loadItemsByDate(date);
         cardAdapter.notifyDataSetChanged();
     }
 }

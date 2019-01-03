@@ -71,7 +71,8 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
         recyclerView = RootView.findViewById(R.id.recycler_fragment_tasks);
 
         cardAdapter = CardAdapter.newInstance(context, this, tasksFragmentInstance);
-        NotificationInteractor notificationManager = new NotificationInteractor(cardAdapter.getArrayList(), getContext());
+        cardAdapter.loadItemsByState();
+        new NotificationInteractor(cardAdapter.getArrayList(), getContext());
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(cardAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
@@ -121,16 +122,13 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
 
     @Override
     public void refreshAdapterOnAdd() {
-        cardAdapter.refreshItems();
+        cardAdapter.loadItemsByState();
+        new NotificationInteractor(cardAdapter.getArrayList(), getContext());
     }
 
     @Override
     public void refreshAdapterOnDelete(int position) {
         cardAdapter.notifyItemRemoved(position);
-    }
-
-    private TasksFragment getInstance() {
-        return tasksFragmentInstance;
     }
 
     public void changeToolbar(ToolbarEnum toolbarEnum) {
