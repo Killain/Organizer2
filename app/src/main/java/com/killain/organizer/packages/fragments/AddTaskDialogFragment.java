@@ -2,6 +2,7 @@ package com.killain.organizer.packages.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -220,6 +221,9 @@ public class AddTaskDialogFragment extends Fragment implements
 
     private void changeToParentFragment() {
         getActivity().getSupportFragmentManager().popBackStack();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            _fragment.setNewAlpha();
+        }
     }
 
 //    private void toolbarSetter(ToolbarEnum toolbarEnum) {

@@ -1,96 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginTop="100dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/relative_layout_dialog"
+    android:elevation="10dp"
     android:clickable="true"
     android:orientation="vertical"
     android:focusable="true"
-    android:background="@color/colorWhite">
+    android:background="@drawable/rect_rounded_corners_grey">
 
     <TextView
         android:id="@+id/dialog_textview_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:text="Set a new task"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:visibility="gone"/>
+        android:visibility="visible"/>
 
     <EditText
         android:id="@+id/dialog_edittext_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="9dp"
-        android:layout_marginLeft="9dp"
         android:layout_marginTop="6dp"
         android:hint="Set a new task"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:visibility="visible" />
+        android:visibility="gone"
+        android:autofillHints="Set a new task..." />
 
     <EditText
         android:id="@+id/task_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="67dp"
-        android:background="@drawable/custom_rectangle"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/rect_rounded_corners_grey"
         android:hint="Write anything you want here..."
-        android:maxLength="140"
         android:inputType="textCapSentences"
+        android:maxLength="140"
         android:padding="13dp"
-        android:textSize="14sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="right"
-        android:background="@color/colorGrey">
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="end">
 
         <ImageButton
             android:id="@+id/cancel_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_close"
-            android:layout_margin="8dp"/>
-
+            android:background="@drawable/ic_close" />
 
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="20dp"
         android:layout_alignParentBottom="true">
 
         <ImageButton
             android:id="@+id/cal_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_custom_calendar"
-            android:layout_marginLeft="5dp"
-            android:text="Button" />
+            android:background="@drawable/ic_custom_calendar"/>
 
         <ImageButton
             android:id="@+id/label_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/set_btn"
-            android:layout_toEndOf="@+id/cal_btn"
-            android:layout_toRightOf="@+id/cal_btn"
-            android:layout_marginLeft="28dp"
+            android:layout_marginStart="28dp"
             android:layout_marginBottom="10dp"
+            android:visibility="gone"
             android:background="@drawable/ic_label_black_36dp" />
 
     </LinearLayout>

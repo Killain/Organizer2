@@ -50,7 +50,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         mDragStartListener = dragListener;
         this.iAdapterRefresher = iAdapterRefresher;
         dataManager = new DataManager(context, null);
-//        arrayList = dataManager.getTasksByState(false, false);
     }
 
     public CardAdapter() {}
@@ -165,7 +164,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         arrayList.remove(position);
         dataManager.updateTask(task);
         iAdapterRefresher.refreshAdapterOnDelete(position);
-//        loadItemsByState();
     }
 
     public void loadItemsByState() {

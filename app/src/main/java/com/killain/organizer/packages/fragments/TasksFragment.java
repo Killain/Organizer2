@@ -2,7 +2,9 @@ package com.killain.organizer.packages.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +12,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -38,6 +41,7 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
     public CardAdapter cardAdapter;
     public TasksFragment tasksFragmentInstance;
     private Context context;
+    private boolean isAlphaSet = false;
 
     public TasksFragment() {
     }
@@ -80,9 +84,14 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
         recyclerView.setAdapter(cardAdapter);
 
         fab_simple_task.setOnClickListener(v -> {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                setNewAlpha();
+            }
+
             Fragment dialog = new AddTaskDialogFragment();
             ((AddTaskDialogFragment) dialog).setListener(this);
-            android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_up, R.anim.slide_out);
             transaction.replace(R.id.fragment1, dialog);
             transaction.addToBackStack("child");
@@ -134,5 +143,16 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
     public void changeToolbar(ToolbarEnum toolbarEnum) {
         Activity activity = (TasksActivity) getContext();
         ((TasksActivity) activity).setNewToolbar(toolbarEnum);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void setNewAlpha() {
+        if (!isAlphaSet) {
+            relative_layout.setAlpha(0.3f);
+            isAlphaSet = true;
+        } else {
+            relative_layout.setAlpha(1f);
+            isAlphaSet = false;
+        }
     }
 }

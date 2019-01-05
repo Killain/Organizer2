@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#757575</color>
-    <color name="colorPrimaryDark">#424242</color>
+    <color name="colorPrimary">#BDBDBD</color>
+    <color name="colorPrimaryDark">#7D7D7D</color>
     <color name="colorAccent">#FFEB3B</color>
     <color name="colorAccentDark">#FDD835</color>
     <color name="colorGrey">#b3b3b3</color>
     <color name="colorOrange">#ff8000</color>
     <color name="colorRed">#ff0000</color>
     <color name="colorWhite">#ffffff</color>
+    <color name="tasksFragmentBackground">#F5F5F5</color>
+    <color name="buttonDefault">#7D7D7D</color>
 </resources>

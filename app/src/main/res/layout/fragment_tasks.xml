@@ -1,14 +1,19 @@
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/parent_layout_tasks_fragment"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:clickable="true"
-    android:focusable="true"
-    android:visibility="visible"
-    tools:context="com.killain.organizer.packages.fragments.TasksFragment">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/parent_layout_tasks_fragment"
+        android:clickable="true"
+        android:background="@color/tasksFragmentBackground"
+        android:focusable="true"
+        android:visibility="visible"
+        tools:context="com.killain.organizer.packages.fragments.TasksFragment">
 
     <TextView
         android:id="@+id/no_task_txt"
@@ -97,4 +102,6 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>
