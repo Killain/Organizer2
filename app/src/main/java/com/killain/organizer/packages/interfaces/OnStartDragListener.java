@@ -2,8 +2,6 @@ package com.killain.organizer.packages.interfaces;
 
 import android.support.v7.widget.RecyclerView;
 
-import com.killain.organizer.packages.card.CardAdapter;
-
 public interface OnStartDragListener {
 
     /**

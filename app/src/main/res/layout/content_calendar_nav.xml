@@ -51,7 +51,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <fragment
-            android:id="@+id/fragment_cal_day"
+            android:id="@+id/dialog_frg"
             class="com.killain.organizer.packages.fragments.CalendarDayFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -10,4 +10,5 @@
     <color name="colorWhite">#ffffff</color>
     <color name="tasksFragmentBackground">#F5F5F5</color>
     <color name="buttonDefault">#7D7D7D</color>
+    <color name="textColor">#424242</color>
 </resources>

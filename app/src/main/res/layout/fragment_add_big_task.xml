@@ -19,7 +19,7 @@
             android:id="@+id/fr_add_big_task_close_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_close_black_30dp"
+            android:src="@drawable/ic_close_black"
             android:layout_margin="16dp"
             android:background="@null"/>
 

@@ -1,8 +1,9 @@
-package com.killain.organizer.packages.card;
+package com.killain.organizer.packages.recyclerview_adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -22,7 +23,6 @@ import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
-import com.killain.organizer.packages.recyclerview.RVATask;
 import com.killain.organizer.packages.tasks.SubTask;
 import com.killain.organizer.packages.tasks.Task;
 
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHolder> implements ItemTouchHelperAdapter{
+public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomViewHolder> implements ItemTouchHelperAdapter{
 
     private Context context;
     private List<Task> arrayList;
@@ -42,9 +42,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
     private Task task;
     private DataManager dataManager;
 
-    public CardAdapter(Context context,
-                       OnStartDragListener dragListener,
-                       IAdapterRefresher iAdapterRefresher) {
+    private RVCardAdapter(Context context,
+                          OnStartDragListener dragListener,
+                          IAdapterRefresher iAdapterRefresher) {
 
         this.context = context;
         mDragStartListener = dragListener;
@@ -52,13 +52,13 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         dataManager = new DataManager(context, null);
     }
 
-    public CardAdapter() {}
+    public RVCardAdapter() {}
 
-    public static CardAdapter newInstance(Context context,
-                                   OnStartDragListener dragListener,
-                                   IAdapterRefresher iAdapterRefresher) {
+    public static RVCardAdapter newInstance(Context context,
+                                            OnStartDragListener dragListener,
+                                            IAdapterRefresher iAdapterRefresher) {
 
-        return new CardAdapter(context, dragListener, iAdapterRefresher);
+        return new RVCardAdapter(context, dragListener, iAdapterRefresher);
     }
 
     @NonNull
@@ -66,9 +66,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_card, parent, false);
-        CustomViewHolder cvh = new CustomViewHolder(v);
-
-        return cvh;
+        return new CustomViewHolder(v);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -78,15 +76,17 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         task = arrayList.get(position);
         task_buffer = task;
 
-        if (task.getTitle() != null) {
-            subTaskArrayList = dataManager.getSubTasksByReference(task.getTitle());
-            RVATask rvaTask = new RVATask(context, task);
+        if (task.isHasReference()) {
+//            subTaskArrayList = dataManager.getSubTasksByReference(task.getTask_string());
+            RVSubTask RVSubTask = new RVSubTask(context, task);
             holder.recycler_view.setVisibility(View.VISIBLE);
-            holder.recycler_view.setAdapter(rvaTask);
-            holder.card_text_upper.setText(task.getTitle());
+            holder.recycler_view.setAdapter(RVSubTask);
+            holder.card_text_upper.setText(task.getTask_string());
+            holder.card_date.setText(task.getDate());
+            holder.card_time.setText(task.getTime());
         } else {
             holder.card_text_upper.setText(task.getTask_string());
-            holder.expanded_text_big_task.setVisibility(View.GONE);
+            holder.card_time.setText(task.getTime());
             holder.card_date.setText(task.getDate());
         }
 
@@ -97,11 +97,11 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         holder.itemView.setOnClickListener(v -> {
 
             if(holder.expand_area.isShown()){
-                YoYo.with(Techniques.FadeOut).duration(700).repeat(0).playOn(holder.expand_area);
+                YoYo.with(Techniques.FadeOut).duration(200).repeat(0).playOn(holder.expand_area);
                 holder.expand_area.setVisibility(View.GONE);
             }
             else{
-                YoYo.with(Techniques.FadeInDown).duration(700).repeat(0).playOn(holder.expand_area);
+                YoYo.with(Techniques.FadeInDown).duration(200).repeat(0).playOn(holder.expand_area);
                 holder.expand_area.setVisibility(View.VISIBLE);
             }
         });
@@ -178,26 +178,27 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
         return (ArrayList<Task>) arrayList;
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
+class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-        public final RelativeLayout expand_area;
-        public final TextView card_text_upper;
-        public final TextView expanded_text_big_task, card_date;
-        public final ImageView handler;
-        public final ImageButton delete_btn;
-        public final RelativeLayout extra_expand_area;
-        public final RecyclerView recycler_view;
-        public final ImageButton done_btn;
+        final ConstraintLayout expand_area;
+        final TextView card_text_upper;
+        final TextView card_date, card_time;
+        final ImageView handler;
+        final ImageButton delete_btn;
+        final RelativeLayout extra_expand_area;
+        final RecyclerView recycler_view;
+        final ImageButton done_btn;
 
-        public CustomViewHolder(View itemView)
+        CustomViewHolder(View itemView)
         {
             super(itemView);
             done_btn = itemView.findViewById(R.id.task_done_btn);
             recycler_view = itemView.findViewById(R.id.expanded_bottom_subtask_recyclerview);
             expand_area = itemView.findViewById(R.id.expanded_bottom);
+            card_time = itemView.findViewById(R.id.card_time);
             delete_btn = itemView.findViewById(R.id.delete_task_btn);
             card_text_upper = itemView.findViewById(R.id.card_text);
-            expanded_text_big_task = itemView.findViewById(R.id.big_task_expanded_text);
+//            expanded_text_big_task = itemView.findViewById(R.id.big_task_expanded_text);
             handler = itemView.findViewById(R.id.img_view_drag);
             extra_expand_area = itemView.findViewById(R.id.extra_expanded_bottom);
             card_date = itemView.findViewById(R.id.card_date);
@@ -209,7 +210,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CustomViewHold
 
         @Override
         public void onItemClear() {
-            itemView.setBackgroundColor(0);
+//            itemView.setBackgroundColor(0);
         }
     }
 }

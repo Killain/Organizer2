@@ -1,4 +1,4 @@
-package com.killain.organizer.packages;
+package com.killain.organizer.packages.ui_tools;
 
 import android.app.DatePickerDialog;
 import android.content.Context;

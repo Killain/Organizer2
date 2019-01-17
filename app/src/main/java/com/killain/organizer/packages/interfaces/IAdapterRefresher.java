@@ -1,6 +1,6 @@
 package com.killain.organizer.packages.interfaces;
 
 public interface IAdapterRefresher {
-    void refreshAdapterOnAdd();
+    void refreshAdapterOnAdd(int position);
     void refreshAdapterOnDelete(int position);
 }

@@ -1,4 +1,4 @@
-package com.killain.organizer.packages.recyclerview;
+package com.killain.organizer.packages.recyclerview_adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -18,29 +18,30 @@ import com.killain.organizer.packages.tasks.Task;
 
 import java.util.ArrayList;
 
-public class RVATask extends RecyclerView.Adapter<RVATask.CustomViewHolder> {
+public class RVSubTask extends RecyclerView.Adapter<RVSubTask.CustomViewHolder> {
 
     private ArrayList<SubTask> arrayList;
     public Context context;
     public DataManager dataManager;
 
-    public RVATask(Context context, Task task) {
+    RVSubTask(Context context, Task task) {
         this.context = context;
         dataManager = new DataManager(context, null);
-        arrayList = dataManager.getSubTasksByReference(task.getTitle());
+        arrayList = dataManager.getSubTasksByReference(task.getTask_string());
     }
 
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
-        RVATask.CustomViewHolder vh = new RVATask.CustomViewHolder(v);
-        return vh;
+        return new CustomViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
-        holder.recycler_edittext.setText(arrayList.get(position).getText());
+        SubTask subTask = arrayList.get(position);
+        holder.recycler_edittext.setText(subTask.getText());
+        holder.recycler_edittext.setEnabled(false);
     }
 
     @Override
@@ -48,13 +49,14 @@ public class RVATask extends RecyclerView.Adapter<RVATask.CustomViewHolder> {
         return arrayList.size();
     }
 
+
     public class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-        public EditText recycler_edittext;
-        public ImageButton delete_btn;
-        public CheckBox checkBox;
+         EditText recycler_edittext;
+         ImageButton delete_btn;
+         CheckBox checkBox;
 
-        public CustomViewHolder(View itemView) {
+         CustomViewHolder(View itemView) {
             super(itemView);
             recycler_edittext = itemView.findViewById(R.id.recycler_item_edittext);
             delete_btn = itemView.findViewById(R.id.delete_item_recycler);

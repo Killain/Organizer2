@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.CalendarView;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.CalendarDayFragment;
@@ -48,7 +46,7 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
 
         CalendarView calendarView = findViewById(R.id.main_backdrop);
 
-        fragment = (CalendarDayFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_cal_day);
+        fragment = (CalendarDayFragment) getSupportFragmentManager().findFragmentById(R.id.dialog_frg);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

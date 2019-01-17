@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 @Entity (tableName = "task")
 public class Task {
@@ -35,6 +36,9 @@ public class Task {
 
     @ColumnInfo(name = "is_deleted")
     private boolean isDeleted;
+
+    @ColumnInfo(name = "has_reference")
+    private boolean hasReference;
 
     @Ignore
     private int list_id;
@@ -120,5 +124,13 @@ public class Task {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public boolean isHasReference() {
+        return hasReference;
+    }
+
+    public void setHasReference(boolean hasReference) {
+        this.hasReference = hasReference;
     }
 }

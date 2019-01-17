@@ -1,10 +1,8 @@
 package com.killain.organizer.packages.fragments;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
@@ -12,21 +10,21 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.killain.organizer.packages.ToolbarEnum;
 import com.killain.organizer.packages.activity.TasksActivity;
 import com.killain.organizer.packages.callbacks.SimpleItemTouchHelperCallback;
-import com.killain.organizer.packages.card.CardAdapter;
+import com.killain.organizer.packages.recyclerview_adapters.RVCardAdapter;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.interactors.NotificationInteractor;
 import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
+import com.killain.organizer.packages.ui_tools.DateHelper;
+import com.killain.organizer.packages.views.HeaderTextView;
 
 public class TasksFragment extends Fragment implements OnStartDragListener, IAdapterRefresher {
 
@@ -38,10 +36,13 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
     public ScrollView scrollView;
     private ItemTouchHelper mItemTouchHelper;
     public RecyclerView recyclerView;
-    public CardAdapter cardAdapter;
+    public RVCardAdapter RVCardAdapter;
     public TasksFragment tasksFragmentInstance;
     private Context context;
     private boolean isAlphaSet = false;
+    private HeaderTextView today_txt_view;
+    private View vertical_line;
+    private TasksActivity a;
 
     public TasksFragment() {
     }
@@ -69,31 +70,45 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
 
         fab_simple_task = RootView.findViewById(R.id.fab_simple_task);
         fab_big_task = RootView.findViewById(R.id.fab_big_task);
+        vertical_line = RootView.findViewById(R.id.tasks_frg_vertical_line);
+
+        today_txt_view = RootView.findViewById(R.id.tasks_frg_today);
+
+        DateHelper dateHelper = new DateHelper();
+        today_txt_view.setText(dateHelper.getFormattedDate());
 
         scrollView = RootView.findViewById(R.id.tasks_frg_scroll_view);
         relative_layout = RootView.findViewById(R.id.parent_layout_tasks_fragment);
+
+        a = (TasksActivity) getContext();
+        if (a != null) {
+            a.setTasksRL(relative_layout);
+        }
+
         recyclerView = RootView.findViewById(R.id.recycler_fragment_tasks);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.bringToFront();
 
-        cardAdapter = CardAdapter.newInstance(context, this, tasksFragmentInstance);
-        cardAdapter.loadItemsByState();
-        new NotificationInteractor(cardAdapter.getArrayList(), getContext());
+        RVCardAdapter = RVCardAdapter.newInstance(context, this, tasksFragmentInstance);
+        RVCardAdapter.loadItemsByState();
+        new NotificationInteractor(RVCardAdapter.getArrayList(), getContext());
 
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(cardAdapter);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(RVCardAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(cardAdapter);
+        recyclerView.setAdapter(RVCardAdapter);
 
         fab_simple_task.setOnClickListener(v -> {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                setNewAlpha();
+                setNewAlphaInActivity();
             }
 
-            Fragment dialog = new AddTaskDialogFragment();
+            Fragment dialog = AddTaskDialogFragment.newInstance();
             ((AddTaskDialogFragment) dialog).setListener(this);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_up, R.anim.slide_out);
-            transaction.replace(R.id.fragment1, dialog);
+            transaction.replace(R.id.tasks_frg, dialog);
             transaction.addToBackStack("child");
             transaction.commit();
             fam.close(true);
@@ -104,7 +119,7 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
             ((AddBigTaskFragment) newFragment).setListener(this);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_up, R.anim.slide_out);
-            transaction.replace(R.id.fragment1, newFragment);
+            transaction.replace(R.id.tasks_frg, newFragment);
             transaction.addToBackStack(null);
             transaction.commit();
             fam.close(true);
@@ -130,29 +145,24 @@ public class TasksFragment extends Fragment implements OnStartDragListener, IAda
     }
 
     @Override
-    public void refreshAdapterOnAdd() {
-        cardAdapter.loadItemsByState();
-        new NotificationInteractor(cardAdapter.getArrayList(), getContext());
+    public void refreshAdapterOnAdd(int position) {
+        RVCardAdapter.loadItemsByState();
+//        new NotificationInteractor(RVCardAdapter.getArrayList(), getContext());
     }
 
     @Override
     public void refreshAdapterOnDelete(int position) {
-        cardAdapter.notifyItemRemoved(position);
+        RVCardAdapter.notifyItemRemoved(position);
     }
 
-    public void changeToolbar(ToolbarEnum toolbarEnum) {
-        Activity activity = (TasksActivity) getContext();
-        ((TasksActivity) activity).setNewToolbar(toolbarEnum);
-    }
+//    public void changeToolbar(ToolbarEnum toolbarEnum) {
+//        Activity activity = (TasksActivity) getContext();
+//        ((TasksActivity) activity).setNewToolbar(toolbarEnum);
+//    }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void setNewAlpha() {
-        if (!isAlphaSet) {
-            relative_layout.setAlpha(0.3f);
-            isAlphaSet = true;
-        } else {
-            relative_layout.setAlpha(1f);
-            isAlphaSet = false;
+    public void setNewAlphaInActivity() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            a.setNewAlpha();
         }
     }
 }

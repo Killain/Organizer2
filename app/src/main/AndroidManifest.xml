@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.killain.organizer">
 
     <application
@@ -10,24 +11,31 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
+        <!--TODO: tools ignore!!! ^-->
 
         <activity
             android:name=".packages.activity.TasksActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+
         <activity
             android:name=".packages.activity.CalendarNavActivity"
             android:label="@string/title_activity_calendar_nav"
             android:theme="@style/AppTheme.NoActionBar">
-
         </activity>
+
+        <service android:name=".packages.services.NotificationService" />
+
     </application>
 
 </manifest>

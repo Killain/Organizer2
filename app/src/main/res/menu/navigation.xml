@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/calendar_fragment_bottom_nav"
+        android:icon="@drawable/ic_custom_calendar"
+        android:title="Calendar">
+    </item>
+
+    <item
+        android:id="@+id/tasks_fragment_bottom_nav"
+        android:title="Tasks">
+    </item>
+
+</menu>

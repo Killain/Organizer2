@@ -24,45 +24,85 @@
         android:visibility="gone"
         android:textSize="30sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </RelativeLayout>
-
     <ScrollView
         android:id="@+id/tasks_frg_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Today"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:layout_marginTop="24dp"
-        android:layout_marginLeft="32dp"/>
-
-        <android.support.v7.widget.RecyclerView
+        <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="22dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            android:id="@+id/recycler_fragment_tasks"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_fragment_tasks"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="75dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:visibility="visible"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/tasks_frg_horizontal_line_top"
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:layout_alignStart="@+id/tasks_frg_today"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="38dp"
+                android:layout_marginEnd="8dp"
+                android:background="@color/colorGrey"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/tasks_frg_today"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <View
+                android:id="@+id/tasks_frg_vertical_line"
+                android:layout_width="1dp"
+                android:layout_height="329dp"
+                android:layout_below="@+id/tasks_frg_horizontal_line_top"
+                android:layout_marginStart="8dp"
+                android:background="@color/colorGrey"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tasks_frg_horizontal_line_top" />
+
+            <com.killain.organizer.packages.views.HeaderTextView
+                android:id="@+id/tasks_frg_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="24dp"
+                android:text="Today, 9 Jan"
+                android:textColor="#424242"
+                android:textSize="24sp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.killain.organizer.packages.views.HeaderTextView
+                android:id="@+id/tasks_frg_tomorrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/recycler_fragment_tasks"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp"
+                android:text="Tomorrow, 10 Jan"
+                android:textColor="#424242"
+                android:textSize="24sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recycler_fragment_tasks" />
+
+        </android.support.constraint.ConstraintLayout>
 
     </ScrollView>
 

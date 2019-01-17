@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.recyclerview.RVABigTask;
+import com.killain.organizer.packages.recyclerview_adapters.RVAHelper;
 import com.killain.organizer.packages.tasks.SubTask;
 import com.killain.organizer.packages.tasks.Task;
 
@@ -30,7 +30,7 @@ public class AddBigTaskFragment extends Fragment  {
     public EditText big_task_title;
     private RelativeLayout rl_add;
     private RecyclerView recyclerView;
-    private RVABigTask adapter;
+    private RVAHelper adapter;
     private ArrayList<SubTask> arrayList;
     private TasksFragment fragment;
     private Calendar day_calendar, time_calendar;
@@ -80,8 +80,8 @@ public class AddBigTaskFragment extends Fragment  {
         recyclerView = view.findViewById(R.id.recycler_add_big_task);
         big_task_title = view.findViewById(R.id.big_task_title);
 
-        adapter = new RVABigTask(getContext());
-        adapter.setListener(this);
+//        adapter = new RVAHelper(getContext());
+//        adapter.setListener(this);
 
         recyclerView.setAdapter(adapter);
 
@@ -109,7 +109,7 @@ public class AddBigTaskFragment extends Fragment  {
             transaction.remove(this);
             getFragmentManager().popBackStack();
             transaction.commit();
-            fragment.refreshAdapterOnAdd();
+            fragment.refreshAdapterOnAdd(1);
         });
         return view;
     }

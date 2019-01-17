@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_marginTop="100dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="80dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:layout_width="match_parent"
@@ -13,85 +15,189 @@
     android:focusable="true"
     android:background="@drawable/rect_rounded_corners_grey">
 
-    <TextView
-        android:id="@+id/dialog_textview_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Set a new task"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:visibility="visible"/>
-
-    <EditText
-        android:id="@+id/dialog_edittext_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="6dp"
-        android:hint="Set a new task"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:visibility="gone"
-        android:autofillHints="Set a new task..." />
-
-    <EditText
-        android:id="@+id/task_edit_text"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="67dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/rect_rounded_corners_grey"
-        android:hint="Write anything you want here..."
-        android:inputType="textCapSentences"
-        android:maxLength="140"
-        android:padding="13dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="20dp"
-        android:gravity="end">
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true">
 
         <ImageButton
-            android:id="@+id/cancel_btn"
+            android:id="@+id/save_task_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_close" />
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="16dp"
+            android:background="@null"
+            android:src="@drawable/ic_tick"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_marginStart="20dp"
-        android:layout_alignParentBottom="true">
-
-        <ImageButton
-            android:id="@+id/cal_btn"
+        <com.killain.organizer.packages.views.HeaderTextView
+            android:id="@+id/dialog_textview_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_custom_calendar"/>
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Set a new task"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textSize="24sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/label_btn"
+        <TextView
+            android:id="@+id/group_txt_dialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="28dp"
-            android:layout_marginBottom="10dp"
+            android:layout_below="@id/task_edit_text"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_rounded_corners_grey"
+            android:padding="6dp"
+            android:text="No marks"
+            app:layout_constraintStart_toEndOf="@+id/add_element_dialog"
+            app:layout_constraintTop_toBottomOf="@+id/task_edit_text"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/add_element_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/group_txt_dialog"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/group_txt_dialog"
+            android:background="@drawable/rect_rounded_corners_grey"
+            android:padding="6dp"
+            android:text="Add element"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/task_edit_text" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/rect_rounded_corners_grey"
+            android:padding="6dp"
+            android:text="Set a date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/task_edit_text" />
+
+
+        <EditText
+            android:id="@+id/dialog_edittext_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="9dp"
+            android:layout_marginTop="6dp"
+            android:autofillHints="Set a new task..."
+            android:hint="Set a new task"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="210dp"
+            android:layout_below="@+id/task_edit_text"
+            android:layout_alignStart="@+id/group_txt_dialog"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_element_dialog">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <EditText
+            android:id="@+id/task_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="60dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/rect_rounded_corners_grey"
+            android:hint="Write anything you want here..."
+            android:inputType="textMultiLine"
+            android:maxLength="140"
+            android:padding="13dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/dialog_btns_layout"
+            android:layout_width="match_parent"
+            android:layout_height="26dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="30dp"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView_dialog">
+
+            <ImageButton
+                android:id="@+id/cancel_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/ic_close"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <ImageButton
+                android:id="@+id/cal_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="16dp"
+                android:background="@drawable/ic_custom_calendar"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="8dp"
             android:visibility="gone"
-            android:background="@drawable/ic_label_black_36dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView_dialog">
 
-    </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/label_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/ic_label_black_36dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
 

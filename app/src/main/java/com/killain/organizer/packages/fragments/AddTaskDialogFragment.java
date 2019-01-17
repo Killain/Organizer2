@@ -1,42 +1,41 @@
 package com.killain.organizer.packages.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.killain.organizer.R;
-import com.killain.organizer.packages.DatePicker;
-import com.killain.organizer.packages.ToolbarEnum;
-import com.killain.organizer.packages.activity.TasksActivity;
+import com.killain.organizer.packages.recyclerview_adapters.RVAHelper;
+import com.killain.organizer.packages.ui_tools.DatePicker;
 import com.killain.organizer.packages.interactors.DataManager;
+import com.killain.organizer.packages.interfaces.IAdapterRefresher;
+import com.killain.organizer.packages.tasks.SubTask;
 import com.killain.organizer.packages.tasks.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddTaskDialogFragment extends Fragment implements
-        View.OnClickListener, PopupMenu.OnMenuItemClickListener {
+        View.OnClickListener, IAdapterRefresher {
 
     public Context context;
     private EditText user_txt;
-    private TextView group_textview, header, header_editable;
-    private ImageButton label, datepicker_btn, set, cancel;
+    private ImageButton label, datepicker_btn, set;
     public String task_type = null;
     private Calendar day_calendar, time_calendar;
     private int group_tag = 0;
@@ -45,8 +44,15 @@ public class AddTaskDialogFragment extends Fragment implements
     private TimePickerDialog timePickerDialog;
     private SimpleDateFormat sdf_date, sdf_time;
     private DataManager dataManager;
+    private RelativeLayout relativeLayout;
+    private RecyclerView recyclerView;
+    private RVAHelper rvaHelper;
+    private ArrayList<SubTask> subTaskArrayList;
 
-    public AddTaskDialogFragment() {
+    public AddTaskDialogFragment() { }
+
+    public static AddTaskDialogFragment newInstance(){
+        return new AddTaskDialogFragment();
     }
 
     public void setListener(TasksFragment fragment) {
@@ -74,45 +80,32 @@ public class AddTaskDialogFragment extends Fragment implements
         day_calendar = Calendar.getInstance();
         time_calendar = Calendar.getInstance();
         sdf_date = new SimpleDateFormat("dd/MM/yyyy");
-        sdf_time = new SimpleDateFormat("HH:mm:ss");
+        sdf_time = new SimpleDateFormat("HH:mm");
+        context = getContext();
+        dataManager = new DataManager(getContext(), null);
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
 
-        _fragment.changeToolbar(ToolbarEnum.TASK_DIALOG_TOOLBAR);
-
+        relativeLayout = view.findViewById(R.id.relative_layout_dialog);
+        recyclerView = view.findViewById(R.id.recyclerView_dialog);
+        rvaHelper = new RVAHelper(context, this);
+        rvaHelper.setListener(this);
+        recyclerView.setAdapter(rvaHelper);
+        TextView add_element = view.findViewById(R.id.add_element_dialog);
         datepicker_btn = view.findViewById(R.id.cal_btn);
-        header = view.findViewById(R.id.dialog_textview_header);
-        header_editable = view.findViewById(R.id.dialog_edittext_header);
-        set = getActivity().findViewById(R.id.set_btn);
-        cancel = view.findViewById(R.id.cancel_btn);
+        set = view.findViewById(R.id.save_task_btn);
         user_txt = view.findViewById(R.id.task_edit_text);
-//        group_textview = view.findViewById(R.id.dialog_group_textview);
         label = view.findViewById(R.id.label_btn);
-//
-//        switch (task_type) {
-//            case "simple":
-//                header_editable.setVisibility(View.GONE);
-//                header.setVisibility(View.VISIBLE);
-//                break;
-//
-//            case "big":
-//                header_editable.setVisibility(View.VISIBLE);
-//                header.setVisibility(View.GONE);
-//                break;
-//
-//            default:
-//                break;
-//        }
-
+        add_element.setOnClickListener(this);
         set.setOnClickListener(this);
-        cancel.setOnClickListener(this);
         datepicker_btn.setOnClickListener(this);
         label.setOnClickListener(v -> showGroupPopup(v));
+
         return view;
     }
 
@@ -122,7 +115,7 @@ public class AddTaskDialogFragment extends Fragment implements
 
         switch (view.getId()) {
 
-            case R.id.set_btn:
+            case R.id.save_task_btn:
                 Task task = new Task();
                 task.setTask_string(user_txt.getText().toString());
                 task.setGroup_tag(group_tag);
@@ -130,16 +123,24 @@ public class AddTaskDialogFragment extends Fragment implements
                 task.setTime(sdf_time.format(time_calendar.getTime()));
                 task.setNotificationShowed(false);
                 task.setCompleted(false);
-                dataManager = new DataManager(getContext(), null);
+
+                subTaskArrayList = rvaHelper.getArrayList();
+
+                if (subTaskArrayList != null) {
+                    for (SubTask subTask : subTaskArrayList) {
+                        task.setHasReference(true);
+                        subTask.setReference(task.getTask_string());
+                        dataManager.addSubTask(subTask);
+                    }
+                }
+
                 dataManager.addTask(task);
-                _fragment.refreshAdapterOnAdd();
+                _fragment.refreshAdapterOnAdd(1);
                 changeToParentFragment();
-                _fragment.changeToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
                 break;
 
             case R.id.cancel_btn:
                 changeToParentFragment();
-                _fragment.changeToolbar(ToolbarEnum.NAVIGATION_TOOLBAR);
                 break;
 
             case R.id.cal_btn:
@@ -169,6 +170,11 @@ public class AddTaskDialogFragment extends Fragment implements
                 });
                 break;
 
+            case R.id.add_element_dialog:
+                recyclerView.setVisibility(View.VISIBLE);
+                rvaHelper.addToRV();
+                break;
+
             default:
                 break;
         }
@@ -181,53 +187,20 @@ public class AddTaskDialogFragment extends Fragment implements
 //        popupMenu.show();
     }
 
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-
-        switch (item.getItemId()) {
-
-            case R.id.none_group:
-                group_tag = 0;
-                group_textview.setText(" ");
-                group_textview.setVisibility(View.GONE);
-                return true;
-
-            case R.id.important_group:
-                group_tag = 1;
-                group_textview.setText("Important");
-                group_textview.setVisibility(View.VISIBLE);
-                return true;
-
-            case R.id.family_group:
-                group_tag = 2;
-                group_textview.setText("Family");
-                group_textview.setVisibility(View.VISIBLE);
-                return true;
-
-            case R.id.sport_group:
-                group_tag = 3;
-                group_textview.setText("Sport");
-                group_textview.setVisibility(View.VISIBLE);
-                return true;
-
-            case R.id.work_group:
-                group_tag = 4;
-                group_textview.setText("Work");
-                group_textview.setVisibility(View.VISIBLE);
-                return true;
-        }
-        return true;
-    }
-
     private void changeToParentFragment() {
         getActivity().getSupportFragmentManager().popBackStack();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            _fragment.setNewAlpha();
+            _fragment.setNewAlphaInActivity();
         }
     }
 
-//    private void toolbarSetter(ToolbarEnum toolbarEnum) {
-//        Activity activity = (TasksActivity) getContext();
-//        ((TasksActivity) activity).setNewToolbar(toolbarEnum);
-//    }
+    @Override
+    public void refreshAdapterOnAdd(int position) {
+        rvaHelper.notifyItemInserted(position);
+    }
+
+    @Override
+    public void refreshAdapterOnDelete(int position) {
+        rvaHelper.notifyItemRemoved(position);
+    }
 }

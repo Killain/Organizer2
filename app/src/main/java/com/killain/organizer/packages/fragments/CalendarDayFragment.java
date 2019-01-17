@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.callbacks.SimpleItemTouchHelperCallback;
-import com.killain.organizer.packages.card.CardAdapter;
+import com.killain.organizer.packages.recyclerview_adapters.RVCardAdapter;
 import com.killain.organizer.packages.interfaces.IAdapterRefresher;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
 
@@ -30,7 +30,7 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
 
     private ItemTouchHelper mItemTouchHelper;
 
-    private CardAdapter cardAdapter;
+    private RVCardAdapter RVCardAdapter;
     private String todayString;
     private RecyclerView recyclerView;
 
@@ -68,12 +68,12 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
         View view = inflater.inflate(R.layout.fragment_calendar_day, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_calendar_fragment);
-        cardAdapter = CardAdapter.newInstance(getContext(), this, this);
-        cardAdapter.loadItemsByDate(todayString);
-        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(cardAdapter);
+        RVCardAdapter = RVCardAdapter.newInstance(getContext(), this, this);
+        RVCardAdapter.loadItemsByDate(todayString);
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(RVCardAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(recyclerView);
-        recyclerView.setAdapter(cardAdapter);
+        recyclerView.setAdapter(RVCardAdapter);
 
         return view;
     }
@@ -84,17 +84,17 @@ public class CalendarDayFragment extends Fragment implements OnStartDragListener
     }
 
     @Override
-    public void refreshAdapterOnAdd() {
-        cardAdapter.loadItemsByState();
+    public void refreshAdapterOnAdd(int position) {
+        RVCardAdapter.loadItemsByState();
     }
 
     @Override
     public void refreshAdapterOnDelete(int position) {
-        cardAdapter.notifyItemRemoved(position);
+        RVCardAdapter.notifyItemRemoved(position);
     }
 
     public void reloadTasksOnDate(String date) {
-        cardAdapter.loadItemsByDate(date);
-        cardAdapter.notifyDataSetChanged();
+        RVCardAdapter.loadItemsByDate(date);
+        RVCardAdapter.notifyDataSetChanged();
     }
 }
