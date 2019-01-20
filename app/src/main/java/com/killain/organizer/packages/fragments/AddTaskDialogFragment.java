@@ -35,19 +35,15 @@ public class AddTaskDialogFragment extends Fragment implements
 
     public Context context;
     private EditText user_txt;
-    private ImageButton label, datepicker_btn, set;
     public String task_type = null;
     private Calendar day_calendar, time_calendar;
-    private int group_tag = 0;
     private TasksFragment _fragment;
-    private DatePicker datePicker;
     private TimePickerDialog timePickerDialog;
     private SimpleDateFormat sdf_date, sdf_time;
     private DataManager dataManager;
-    private RelativeLayout relativeLayout;
+    public RelativeLayout relativeLayout;
     private RecyclerView recyclerView;
     private RVAHelper rvaHelper;
-    private ArrayList<SubTask> subTaskArrayList;
 
     public AddTaskDialogFragment() { }
 
@@ -57,21 +53,6 @@ public class AddTaskDialogFragment extends Fragment implements
 
     public void setListener(TasksFragment fragment) {
         _fragment = fragment;
-    }
-
-    @Override
-    public void onResume() {
-//        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-//        int width = displayMetrics.widthPixels;
-//        int height = displayMetrics.heightPixels;
-//
-//        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-//        lp.copyFrom(getDialog().getWindow().getAttributes());
-//        lp.height = height / 2;
-//        lp.width = width;
-//
-//        getDialog().getWindow().setAttributes(lp);
-        super.onResume();
     }
 
     @Override
@@ -97,14 +78,12 @@ public class AddTaskDialogFragment extends Fragment implements
         rvaHelper.setListener(this);
         recyclerView.setAdapter(rvaHelper);
         TextView add_element = view.findViewById(R.id.add_element_dialog);
-        datepicker_btn = view.findViewById(R.id.cal_btn);
-        set = view.findViewById(R.id.save_task_btn);
+        ImageButton datepicker_btn = view.findViewById(R.id.cal_btn);
+        ImageButton set = view.findViewById(R.id.save_task_btn);
         user_txt = view.findViewById(R.id.task_edit_text);
-        label = view.findViewById(R.id.label_btn);
         add_element.setOnClickListener(this);
         set.setOnClickListener(this);
         datepicker_btn.setOnClickListener(this);
-        label.setOnClickListener(v -> showGroupPopup(v));
 
         return view;
     }
@@ -118,13 +97,12 @@ public class AddTaskDialogFragment extends Fragment implements
             case R.id.save_task_btn:
                 Task task = new Task();
                 task.setTask_string(user_txt.getText().toString());
-                task.setGroup_tag(group_tag);
                 task.setDate(sdf_date.format(day_calendar.getTime()));
                 task.setTime(sdf_time.format(time_calendar.getTime()));
                 task.setNotificationShowed(false);
                 task.setCompleted(false);
 
-                subTaskArrayList = rvaHelper.getArrayList();
+                ArrayList<SubTask> subTaskArrayList = rvaHelper.getArrayList();
 
                 if (subTaskArrayList != null) {
                     for (SubTask subTask : subTaskArrayList) {
@@ -145,7 +123,7 @@ public class AddTaskDialogFragment extends Fragment implements
 
             case R.id.cal_btn:
 
-                datePicker = new DatePicker(getContext(), null,
+                DatePicker datePicker = new DatePicker(getContext(), null,
                         day_calendar.get(Calendar.YEAR),
                         day_calendar.get(Calendar.MONTH),
                         day_calendar.get(Calendar.DAY_OF_MONTH));
@@ -180,17 +158,11 @@ public class AddTaskDialogFragment extends Fragment implements
         }
     }
 
-    public void showGroupPopup(View view) {
-//        PopupMenu popupMenu = new PopupMenu(getContext(), view);
-//        popupMenu.setOnMenuItemClickListener(this);
-//        popupMenu.inflate(R.menu.group_task_popup_menu);
-//        popupMenu.show();
-    }
-
     private void changeToParentFragment() {
         getActivity().getSupportFragmentManager().popBackStack();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             _fragment.setNewAlphaInActivity();
+            _fragment.UISwitch();
         }
     }
 

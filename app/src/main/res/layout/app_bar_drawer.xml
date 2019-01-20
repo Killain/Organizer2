@@ -1,52 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.killain.organizer.packages.activity.TasksActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:visibility="visible">
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay">-->
-
-        </android.support.v7.widget.Toolbar>
-
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/custom_toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?attr/actionBarSize"-->
-            <!--android:background="?attr/colorPrimary"-->
-            <!--android:visibility="gone">-->
-
-            <!--<RelativeLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent">-->
-
-                <!--<ImageButton-->
-                    <!--android:id="@+id/set_btn"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_alignParentEnd="true"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginEnd="15dp"-->
-                    <!--android:background="@drawable/ic_tick"/>-->
-
-            <!--</RelativeLayout>-->
-
-        <!--</android.support.v7.widget.Toolbar>-->
-
-    </android.support.design.widget.AppBarLayout>
-
-    <include layout="@layout/content_drawer" />
-
-</android.support.design.widget.CoordinatorLayout>
+    <!--<FrameLayout-->
+        <!--android:id="@+id/content_frame_layout"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_width="match_parent"-->
+        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/navigation"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--tools:context="com.killain.organizer.packages.activity.TasksActivity"-->
+        <!--tools:layout_editor_absoluteX="0dp"-->
+        <!--tools:layout_editor_absoluteY="0dp" />-->
+    <!---->
+</android.support.constraint.ConstraintLayout>

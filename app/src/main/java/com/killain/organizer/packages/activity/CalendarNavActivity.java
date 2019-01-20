@@ -1,29 +1,28 @@
 package com.killain.organizer.packages.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.CalendarView;
+import android.view.View;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.CalendarDayFragment;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+
+import org.threeten.bp.LocalDate;
+
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 
-public class CalendarNavActivity extends AppCompatActivity implements CalendarView.OnDateChangeListener,
-        NavigationView.OnNavigationItemSelectedListener {
+public class CalendarNavActivity extends AppCompatActivity implements OnDateSelectedListener, AppBarLayout.OnOffsetChangedListener {
 
     private CalendarDayFragment fragment;
-    private CalendarView calendarView;
+    private MaterialCalendarView main_calendarView, small_calendarView;
+    public AppBarLayout appBarLayout;
 
     private String mYear;
     private String mMonth;
@@ -39,118 +38,104 @@ public class CalendarNavActivity extends AppCompatActivity implements CalendarVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar_nav);
+        setContentView(R.layout.app_bar_calendar_nav);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
 
-        CalendarView calendarView = findViewById(R.id.main_backdrop);
+        main_calendarView = findViewById(R.id.main_backdrop);
+        small_calendarView = findViewById(R.id.small_calendarView);
 
-        fragment = (CalendarDayFragment) getSupportFragmentManager().findFragmentById(R.id.dialog_frg);
+        appBarLayout = findViewById(R.id.main_appbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+        fragment = new CalendarDayFragment();
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.add(R.id.cal_frg_frame_layout, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
 
-        calendarView.setOnDateChangeListener(this);
+        appBarLayout.addOnOffsetChangedListener(this);
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        main_calendarView.setOnDateChangedListener(this);
+        LocalDate localDate = LocalDate.now();
+        main_calendarView.setCurrentDate(localDate);
+        main_calendarView.setSelectedDate(localDate);
+        small_calendarView.setVisibility(View.GONE);
+        small_calendarView.setAlpha(0.0f);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
             super.onBackPressed();
-        }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.drawer, menu); //calendar_nav
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-
-        int id = item.getItemId();
-
-        if (id == R.id.nav_calendar) {
-            drawer.closeDrawer(GravityCompat.START);
-
-        } else if (id == R.id.nav_task) {
-            Intent intent = new Intent(CalendarNavActivity.this, TasksActivity.class);
-            startActivity(intent);
-
-//        } else if (id == R.id.nav_contacts) {
+//    @Override
+//    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
 //
-//        } else if (id == R.id.nav_manage) {
+//        mYear = Integer.toString(year);
+//        secondaryMonth = month + 1;
+//        secondaryDay = dayOfMonth;
+//        mMonth = Integer.toString(secondaryMonth);
+//        mDay = Integer.toString(dayOfMonth);
+////
+//        if (secondaryMonth <= 9) {
+//            mMonth = "0" + secondaryMonth;
+//        }
 //
-//        } else if (id == R.id.nav_share) {
+//        if (dayOfMonth <= 9) {
+//            mDay = "0" + secondaryDay;
+//        }
 //
-//        } else if (id == R.id.nav_send) {
+//        newdate = mDay + "/" + mMonth + "/" + mYear;
 //
-        }
-
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
+//        fragment.reloadTasksOnDate(newdate);
+//    }
 
     @Override
-    public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-
-        mYear = Integer.toString(year);
-        secondaryMonth = month + 1;
-        secondaryDay = dayOfMonth;
-        mMonth = Integer.toString(secondaryMonth);
-        mDay = Integer.toString(dayOfMonth);
-
-        //TODO: сделать нормально
-
-        if (secondaryMonth <= 9) {
-            mMonth = "0" + secondaryMonth;
-        }
-
-        if (dayOfMonth <= 9) {
-            mDay = "0" + secondaryDay;
-        }
-
-        newdate = mDay + "/" + mMonth + "/" + mYear;
-
+    public void onDateSelected(@NonNull MaterialCalendarView materialCalendarView,
+                               @NonNull CalendarDay calendarDay, boolean b) {
+        newdate = getConvertedDate(calendarDay);
         fragment.reloadTasksOnDate(newdate);
     }
 
-    private String getDate(CalendarView view) {
-        if (view != null) {
-            long_date = view.getDate();
-            date = new Date(long_date);
-            return sdf.format(date);
+    private String getConvertedDate(CalendarDay calendarDay) {
+        LocalDate localDate = calendarDay.getDate();
+        secondaryDay = localDate.getDayOfMonth();
+        secondaryMonth = localDate.getMonthValue();
+
+        if (secondaryMonth <= 9) {
+            mMonth = "0" + secondaryMonth;
         } else {
-            date = Calendar.getInstance().getTime();
-            return sdf.format(date);
+            mMonth = Integer.toString(localDate.getMonthValue());
         }
+
+        if (secondaryDay <= 9) {
+            mDay = "0" + secondaryDay;
+        } else {
+            mDay = Integer.toString(localDate.getDayOfMonth());
+        }
+
+        mYear = Integer.toString(localDate.getYear());
+
+        String converted = mDay + "/" + mMonth + "/" + mYear;
+        return converted;
     }
 
+    @Override
+    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+        if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0)
+        {
+            //  Collapsed
+            small_calendarView.setVisibility(View.VISIBLE);
+            small_calendarView.animate().alpha(1.0f);
+        }
+        else
+        {
+            //Expanded
+            small_calendarView.setVisibility(View.GONE);
+            small_calendarView.animate().alpha(0.0f);
+
+        }
+
+    }
 }

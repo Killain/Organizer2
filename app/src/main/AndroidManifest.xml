@@ -19,7 +19,7 @@
         <activity
             android:name=".packages.activity.TasksActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
         <activity
             android:name=".packages.activity.CalendarNavActivity"
             android:label="@string/title_activity_calendar_nav"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
         </activity>
 
         <service android:name=".packages.services.NotificationService" />

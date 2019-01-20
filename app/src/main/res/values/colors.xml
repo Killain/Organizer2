@@ -11,4 +11,11 @@
     <color name="tasksFragmentBackground">#F5F5F5</color>
     <color name="buttonDefault">#7D7D7D</color>
     <color name="textColor">#424242</color>
+
+    <color name="secondaryPrimary">#00cfde</color>
+    <color name="secondaryPrimaryDark">#088080</color>
+    <color name="secondaryTextMain">#436a75</color>
+    <color name="secondaryTextHeader">#0f2228</color>
+    <color name="secondaryBackgroundMain">#c2d2d6</color>
+
 </resources>
