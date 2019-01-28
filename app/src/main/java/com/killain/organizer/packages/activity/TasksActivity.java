@@ -6,26 +6,19 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.RelativeLayout;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.services.NotificationService;
 
-public class TasksActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+public class TasksActivity extends AppCompatActivity
+        implements BottomNavigationView.OnNavigationItemSelectedListener {
 
+    private TasksFragment fragment;
     private BottomNavigationView navigationView;
-    private Toolbar toolbar, custom_toolbar;
-    private RelativeLayout relativeLayout;
-    private boolean isAlphaSet = false;
-    private TasksFragment tasksFragmentInstance, fragment1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +26,13 @@ public class TasksActivity extends AppCompatActivity implements BottomNavigation
         setContentView(R.layout.activity_drawer);
 
         navigationView = findViewById(R.id.navigation);
-        navigationView.setOnNavigationItemSelectedListener(this::onNavigationItemSelected);
+        navigationView.setOnNavigationItemSelectedListener(this);
+        navigationView.setSelectedItemId(R.id.tasks_fragment_bottom_nav);
 
-        fragment1 = new TasksFragment();
+
+        fragment = new TasksFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(R.id.content_frame_layout, fragment1);
+        ft.add(R.id.content_frame_layout, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.commit();
 
@@ -45,51 +40,48 @@ public class TasksActivity extends AppCompatActivity implements BottomNavigation
     }
 
     @Override
+    protected void onResume() {
+        navigationView.setSelectedItemId(R.id.tasks_fragment_bottom_nav);
+        super.onResume();
+    }
+
+    @Override
     public void onBackPressed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             setNewAlpha();
-            fragment1.UISwitch();
+            fragment.UISwitch();
         }
         super.onBackPressed();
     }
 
     @Override
     protected void onPause() {
-        startService(new Intent(this, NotificationService.class));
+//        startService(new Intent(this, NotificationService.class));
         super.onPause();
     }
 
-//    public void setTasksRL(RelativeLayout relativeLayout) {
-//        this.relativeLayout = relativeLayout;
-//    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void setNewAlpha() {
-        if (!isAlphaSet) {
+        if (fragment.relative_layout.getAlpha() == 1f) {
             //TODO: refers to public variable
-            fragment1.relative_layout.setAlpha(0.3f);
-            isAlphaSet = true;
+            fragment.relative_layout.setAlpha(0.3f);
         } else {
-            fragment1.relative_layout.setAlpha(1f);
-            isAlphaSet = false;
+            fragment.relative_layout.setAlpha(1f);
         }
     }
-
-//    public void setTasksFragmentInstance(TasksFragment tasksFragmentInstance) {
-//        this.tasksFragmentInstance = tasksFragmentInstance;
-//    }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.calendar_fragment_bottom_nav:
                 Intent intent = new Intent(TasksActivity.this, CalendarNavActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 TasksActivity.this.startActivity(intent);
                 break;
 
                 default: break;
         }
-
         return true;
     }
 }

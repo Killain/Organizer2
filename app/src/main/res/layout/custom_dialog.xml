@@ -75,11 +75,11 @@
             android:background="@drawable/rect_rounded_corners_grey"
             android:padding="6dp"
             android:text="Add element"
-            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintStart_toEndOf="@+id/dialog_txt_cal_btn"
             app:layout_constraintTop_toBottomOf="@+id/task_edit_text" />
 
         <TextView
-            android:id="@+id/textView2"
+            android:id="@+id/dialog_txt_cal_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -132,6 +132,8 @@
             android:inputType="textMultiLine"
             android:maxLength="140"
             android:padding="13dp"
+            android:isScrollContainer="false"
+            android:nestedScrollingEnabled="false"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

@@ -8,8 +8,8 @@ import com.killain.organizer.packages.interfaces.DBComponent;
 import com.killain.organizer.packages.interfaces.DaggerDBComponent;
 import com.killain.organizer.packages.interfaces.SubTaskDAO;
 import com.killain.organizer.packages.interfaces.TaskDAO;
-import com.killain.organizer.packages.tasks.SubTask;
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.SubTask;
+import com.killain.organizer.packages.models.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +57,10 @@ public class DataManager {
 
     public void addSubTask(SubTask subTask) {
         subTaskDAO.addSubTask(subTask);
+    }
+
+    public void updateSubTask(SubTask subTask) {
+        subTaskDAO.updateSubTask(subTask);
     }
 
     public void deleteTask(Task task) {

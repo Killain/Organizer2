@@ -1,4 +1,4 @@
-package com.killain.organizer.packages.tasks;
+package com.killain.organizer.packages.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -17,6 +17,8 @@ public class SubTask {
     private int OrderId;
     @ColumnInfo(name = "subtask_reference")
     private String reference;
+    @ColumnInfo(name = "subtask_is_checked")
+    private boolean isChecked;
 
     public SubTask() {
 
@@ -52,5 +54,13 @@ public class SubTask {
 
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    public boolean isChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(boolean checked) {
+        isChecked = checked;
     }
 }

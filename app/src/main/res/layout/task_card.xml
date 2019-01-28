@@ -23,6 +23,7 @@
             android:id="@+id/rl_parent_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
             android:paddingBottom="20dp">
 
             <ImageView
@@ -45,65 +46,40 @@
             <!--android:scaleType="centerCrop"-->
             <!--android:src="@drawable/ic_attachment_black_36dp">-->
 
-            <ImageView
-                android:id="@+id/card_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="15dp"
-                android:src="@drawable/ic_date"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/card_status_rect"
-                app:layout_constraintTop_toTopOf="parent" />
+            <!--<ImageView-->
+                <!--android:id="@+id/card_avatar"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="18dp"-->
+                <!--android:layout_marginTop="15dp"-->
+                <!--android:src="@drawable/ic_date"-->
+                <!--app:layout_constraintBottom_toBottomOf="parent"-->
+                <!--app:layout_constraintStart_toStartOf="parent"-->
+                <!--app:layout_constraintTop_toBottomOf="@+id/card_status_rect"-->
+                <!--app:layout_constraintTop_toTopOf="parent" />-->
 
             <!--</android.support.v7.widget.CardView>-->
-
-            <TextView
-                android:id="@+id/card_author"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="13dp"
-                android:text="Cillian Grigoryev"
-                android:textSize="10sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/card_avatar"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="25dp"
-                android:text="13/10/13"
-                android:textSize="10sp"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@id/card_avatar"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <com.killain.organizer.packages.views.TaskTitleTextView
                 android:id="@+id/card_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="7dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="40dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:gravity="start"
                 android:text="Sample task evvv"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 android:textColor="@color/textColor"
                 android:textSize="16sp"
-                app:layout_constraintStart_toEndOf="@+id/card_avatar"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.killain.organizer.packages.views.TaskDateTextView
                 android:id="@+id/card_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="49dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:text="09 Jan"
                 android:textColor="@color/textColor"
                 android:textSize="12sp"
@@ -114,8 +90,8 @@
                 android:id="@+id/card_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="14:44"
                 android:textColor="@color/textColor"
                 android:textSize="12sp"
@@ -181,7 +157,7 @@
                     android:layout_marginBottom="10dp"
                     android:alpha="128"
                     android:background="@null"
-                    android:src="@drawable/ic_close_black"
+                    android:src="@drawable/ic_delete"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -191,9 +167,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
                     android:background="@null"
                     android:src="@drawable/ic_pen_edit"
+                    android:visibility="gone"
                     app:layout_constraintStart_toEndOf="@+id/expanded_bottom_delete_img_btn"
                     app:layout_constraintTop_toTopOf="parent" />
 

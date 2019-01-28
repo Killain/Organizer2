@@ -6,7 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.Task;
 import java.util.List;
 
 @Dao

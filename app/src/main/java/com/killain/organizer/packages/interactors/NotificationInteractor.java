@@ -5,7 +5,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.task_watcher.TaskWatcher;
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.Task;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,14 +30,12 @@ public class NotificationInteractor {
     private SimpleDateFormat sdf_date = new SimpleDateFormat("dd/MM/yyyy");
     private String dateString, timeString;
 
-    public NotificationInteractor(ArrayList<Task> arrayList,
-                                  Context context) {
-
-        this.arrayList = arrayList;
+    public NotificationInteractor(Context context) {
         this.context = context;
+        dataManager = new DataManager(context, null);
+        arrayList = dataManager.getTasksByState(false, false);
         taskObservable = Observable.fromIterable(arrayList);
         taskWatcher = getObserver();
-        dataManager = new DataManager(context, null);
         subscribeCycle();
     }
 
@@ -58,7 +56,10 @@ public class NotificationInteractor {
 
                 if (task.getDate().equals(dateString) && task.getTime().equals(timeString)) {
                     createNotification(task.getTitle(), task.getTask_string(), task);
+                    arrayList.remove(task);
                 }
+
+                subscribeCycle();
             }
 
             @Override
@@ -68,7 +69,6 @@ public class NotificationInteractor {
 
             @Override
             public void onComplete() {
-                subscribeCycle();
                 super.onComplete();
             }
         };
@@ -99,10 +99,16 @@ public class NotificationInteractor {
     }
 
     private void subscribeCycle() {
+        reloadTasks();
         taskObservable.subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.single())
-                .delay(600, TimeUnit.MILLISECONDS)
+                .delay(30000, TimeUnit.MILLISECONDS)
                 .repeat()
                 .subscribe(taskWatcher);
+    }
+
+    private void reloadTasks() {
+        arrayList = dataManager.getTasksByState(false, false);
+        taskObservable = Observable.fromIterable(arrayList);
     }
 }

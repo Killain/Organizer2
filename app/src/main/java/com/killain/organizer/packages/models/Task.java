@@ -1,13 +1,12 @@
-package com.killain.organizer.packages.tasks;
+package com.killain.organizer.packages.models;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 @Entity (tableName = "task")
-public class Task {
+public class Task implements Cloneable {
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id")
@@ -40,8 +39,8 @@ public class Task {
     @ColumnInfo(name = "has_reference")
     private boolean hasReference;
 
-    @Ignore
-    private int list_id;
+    @ColumnInfo(name = "task_list_index")
+    private int list_index;
 
     public Task() {
     }
@@ -70,12 +69,12 @@ public class Task {
         this.title = title;
     }
 
-    public int getList_id() {
-        return list_id;
+    public int getList_index() {
+        return list_index;
     }
 
-    public void setList_id(int list_id) {
-        this.list_id = list_id;
+    public void setList_index(int list_index) {
+        this.list_index = list_index;
     }
 
     public boolean isCompleted() {
@@ -132,5 +131,11 @@ public class Task {
 
     public void setHasReference(boolean hasReference) {
         this.hasReference = hasReference;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Task task = (Task) super.clone();
+        return task;
     }
 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,53 +13,55 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.killain.organizer.R;
+import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.interfaces.IAdapterRefresher;
+import com.killain.organizer.packages.interfaces.FragmentUIHandler;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
-import com.killain.organizer.packages.tasks.SubTask;
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.Task;
+import com.killain.organizer.packages.ui_tools.DateHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomViewHolder> implements ItemTouchHelperAdapter{
+public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomViewHolder> implements
+        ItemTouchHelperAdapter{
 
     private Context context;
     private List<Task> arrayList;
-    private ArrayList<SubTask> subTaskArrayList;
+    private ArrayList<Task> delayedTaskArrayList;
     private OnStartDragListener mDragStartListener;
-    private IAdapterRefresher iAdapterRefresher;
-    private Task task_buffer;
-    private int size;
-    private Task task;
+    private FragmentUIHandler fragmentUIHandler;
+    private Task task, delayed_task;
     private DataManager dataManager;
+    private DateHelper dateHelper;
 
-    private RVCardAdapter(Context context,
-                          OnStartDragListener dragListener,
-                          IAdapterRefresher iAdapterRefresher) {
+    public RVCardAdapter(Context context,
+                         OnStartDragListener dragListener,
+                         FragmentUIHandler fragmentUIHandler) {
 
         this.context = context;
         mDragStartListener = dragListener;
-        this.iAdapterRefresher = iAdapterRefresher;
+        this.fragmentUIHandler = fragmentUIHandler;
         dataManager = new DataManager(context, null);
+        delayedTaskArrayList = new ArrayList<>();
+        dateHelper = new DateHelper();
     }
 
     public RVCardAdapter() {}
 
     public static RVCardAdapter newInstance(Context context,
                                             OnStartDragListener dragListener,
-                                            IAdapterRefresher iAdapterRefresher) {
+                                            FragmentUIHandler fragmentUIHandler) {
 
-        return new RVCardAdapter(context, dragListener, iAdapterRefresher);
+        return new RVCardAdapter(context, dragListener, fragmentUIHandler);
     }
 
     @NonNull
@@ -74,25 +77,23 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
     public void onBindViewHolder(@NonNull final CustomViewHolder holder, int position) {
 
         task = arrayList.get(position);
-        task_buffer = task;
 
         if (task.isHasReference()) {
-//            subTaskArrayList = dataManager.getSubTasksByReference(task.getTask_string());
             RVSubTask RVSubTask = new RVSubTask(context, task);
             holder.recycler_view.setVisibility(View.VISIBLE);
             holder.recycler_view.setAdapter(RVSubTask);
             holder.card_text_upper.setText(task.getTask_string());
-            holder.card_date.setText(task.getDate());
+//            holder.card_date.setText(task.getDate());
+            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate()));
             holder.card_time.setText(task.getTime());
         } else {
             holder.card_text_upper.setText(task.getTask_string());
             holder.card_time.setText(task.getTime());
-            holder.card_date.setText(task.getDate());
+//            holder.card_date.setText(task.getDate());
+            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate()));
         }
 
         holder.expand_area.setVisibility(View.GONE);
-
-        holder.extra_expand_area.setVisibility(View.GONE);
 
         holder.itemView.setOnClickListener(v -> {
 
@@ -106,17 +107,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             }
         });
 
-        holder.itemView.setOnLongClickListener(v -> {
-            if(holder.extra_expand_area.isShown()){
-                holder.extra_expand_area.setVisibility(View.GONE);
-            }
-            else{
-                holder.extra_expand_area.setVisibility(View.VISIBLE);
-            }
-            return true;
-        });
-
-        holder.handler.setOnTouchListener((v, event) -> {
+        holder.dragger.setOnTouchListener((v, event) -> {
             if (MotionEventCompat.getActionMasked(event) == MotionEvent.ACTION_DOWN) {
                 mDragStartListener.onStartDrag(holder);
             }
@@ -125,6 +116,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
 
         holder.delete_btn.setOnClickListener((v) -> {
             removeAt(holder.getAdapterPosition(), task);
+
             dataManager.deleteTask(task);
         });
 
@@ -133,7 +125,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             dataManager.updateTask(task);
             arrayList.remove(position);
             removeAt(position, task);
-            iAdapterRefresher.refreshAdapterOnDelete(position);
+            fragmentUIHandler.refreshAdapterOnDelete(position);
             loadItemsByState();
         });
     }
@@ -160,10 +152,29 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
 
     private void removeAt(int position, Task t) {
         task = t;
+        task.setList_index(position);
+        try {
+            delayed_task = (Task) task.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        delayedTaskArrayList.add(delayed_task);
         task.setDeleted(true);
         arrayList.remove(position);
-        dataManager.updateTask(task);
-        iAdapterRefresher.refreshAdapterOnDelete(position);
+        Snackbar.make(fragmentUIHandler.getBackground(), "Deleted", Snackbar.LENGTH_LONG)
+                .setAction("UNDO", v -> {
+                    task.setDeleted(false);
+                    try {
+                        task = (Task) delayedTaskArrayList.get(delayedTaskArrayList.size() - 1).clone();
+                    } catch (CloneNotSupportedException e) {
+                        e.printStackTrace();
+                    }
+                    arrayList.add(task);
+                    delayedTaskArrayList.remove(0);
+                    fragmentUIHandler.refreshAdapterOnAdd(position, AdapterRefreshType.DEFAULT);
+                }).show();
+//        dataManager.updateTask(task);
+        fragmentUIHandler.refreshAdapterOnDelete(position);
     }
 
     public void loadItemsByState() {
@@ -178,14 +189,23 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         return (ArrayList<Task>) arrayList;
     }
 
-class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
+    public void onDestroy() {
+        if (delayedTaskArrayList != null && delayedTaskArrayList.size() != 0) {
+            for (Task task : delayedTaskArrayList) {
+                task.setDeleted(true);
+                dataManager.updateTask(task);
+            }
+        }
+    }
+
+    class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
         final ConstraintLayout expand_area;
         final TextView card_text_upper;
         final TextView card_date, card_time;
-        final ImageView handler;
+        final ImageView dragger;
         final ImageButton delete_btn;
-        final RelativeLayout extra_expand_area;
+//        final RelativeLayout extra_expand_area;
         final RecyclerView recycler_view;
         final ImageButton done_btn;
 
@@ -196,11 +216,10 @@ class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelpe
             recycler_view = itemView.findViewById(R.id.expanded_bottom_subtask_recyclerview);
             expand_area = itemView.findViewById(R.id.expanded_bottom);
             card_time = itemView.findViewById(R.id.card_time);
-            delete_btn = itemView.findViewById(R.id.delete_task_btn);
+            delete_btn = itemView.findViewById(R.id.expanded_bottom_delete_img_btn);
             card_text_upper = itemView.findViewById(R.id.card_text);
-//            expanded_text_big_task = itemView.findViewById(R.id.big_task_expanded_text);
-            handler = itemView.findViewById(R.id.img_view_drag);
-            extra_expand_area = itemView.findViewById(R.id.extra_expanded_bottom);
+            dragger = itemView.findViewById(R.id.img_view_drag);
+//            extra_expand_area = itemView.findViewById(R.id.extra_expanded_bottom);
             card_date = itemView.findViewById(R.id.card_date);
         }
 
@@ -210,7 +229,6 @@ class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelpe
 
         @Override
         public void onItemClear() {
-//            itemView.setBackgroundColor(0);
         }
     }
 }

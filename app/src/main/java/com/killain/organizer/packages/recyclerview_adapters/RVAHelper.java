@@ -14,10 +14,11 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 
 import com.killain.organizer.R;
+import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.fragments.AddTaskDialogFragment;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.interfaces.IAdapterRefresher;
-import com.killain.organizer.packages.tasks.SubTask;
+import com.killain.organizer.packages.interfaces.FragmentUIHandler;
+import com.killain.organizer.packages.models.SubTask;
 import com.killain.organizer.packages.views.ListEditTextView;
 
 import java.util.ArrayList;
@@ -25,15 +26,15 @@ import java.util.ArrayList;
 public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
 
     private Context context;
-    private IAdapterRefresher iAdapterRefresher;
+    private FragmentUIHandler fragmentUIHandler;
     private ArrayList<SubTask> arrayList;
     private AddTaskDialogFragment fragment;
     private DataManager dataManager;
     private int index = 0;
 
-    public RVAHelper(Context context, IAdapterRefresher iAdapterRefresher) {
+    public RVAHelper(Context context, FragmentUIHandler fragmentUIHandler) {
         this.context = context;
-        this.iAdapterRefresher = iAdapterRefresher;
+        this.fragmentUIHandler = fragmentUIHandler;
         arrayList = new ArrayList<>();
     }
 
@@ -91,7 +92,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
     public void addToRV() {
         SubTask subTask = new SubTask();
         arrayList.add(subTask);
-        iAdapterRefresher.refreshAdapterOnAdd(arrayList.size() - 1);
+        fragmentUIHandler.refreshAdapterOnAdd(arrayList.size() - 1, AdapterRefreshType.DEFAULT);
         index++;
     }
 
@@ -114,7 +115,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
 
     private void removeAt(int position) {
         arrayList.remove(position);
-        iAdapterRefresher.refreshAdapterOnDelete(position);
+        fragmentUIHandler.refreshAdapterOnDelete(position);
     }
 
     public void setSubTasksReference(String reference) {
@@ -129,7 +130,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
         secondary.addAll(array);
         arrayList.clear();
         arrayList.addAll(secondary);
-        fragment.refreshAdapterOnAdd(index);
+        fragment.refreshAdapterOnAdd(index, AdapterRefreshType.DEFAULT);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

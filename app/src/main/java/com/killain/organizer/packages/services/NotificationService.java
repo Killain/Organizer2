@@ -5,11 +5,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interactors.NotificationInteractor;
-import com.killain.organizer.packages.tasks.Task;
-
-import java.util.ArrayList;
 
 public class NotificationService extends Service {
 
@@ -36,8 +32,6 @@ public class NotificationService extends Service {
     }
 
     private void startObserving() {
-        DataManager dataManager = new DataManager(getApplicationContext(), null);
-        ArrayList<Task> arrayList = dataManager.getTasksByState(false, false);
-        NotificationInteractor interactor = new NotificationInteractor(arrayList, getApplicationContext());
+        new NotificationInteractor(getApplicationContext());
     }
 }

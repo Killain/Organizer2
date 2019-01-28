@@ -23,10 +23,11 @@
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
+        android:background="?android:attr/selectableItemBackground"
         android:visibility="visible"
         app:itemBackground="@color/colorWhite"
-        app:itemTextColor="@color/colorGrey"
+        app:itemTextColor="@color/color_selector"
+        app:itemIconTint="@color/color_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,36 +44,42 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fam_tasks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:menu_colorNormal="@color/colorAccentDark"
-        app:menu_fab_size="normal"
-        app:menu_labels_position="left">
+    <!--<com.github.clans.fab.FloatingActionMenu-->
+        <!--android:id="@+id/fam_tasks"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:layout_margin="@dimen/fab_margin"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/navigation"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:menu_colorNormal="@color/colorAccentDark"-->
+        <!--app:menu_fab_size="normal"-->
+        <!--app:menu_labels_position="left">-->
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_simple_task"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
             android:src="@drawable/ic_add"
+            app:layout_constraintBottom_toTopOf="@+id/navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:fab_colorNormal="@color/colorAccentDark"
+            app:fab_colorPressed="@color/colorAccent"
             app:fab_label="Add simple task"
-            app:fab_size="mini"
+            app:fab_size="normal"
             tools:ignore="VectorDrawableCompat" />
 
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_big_task"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_add"
-            app:fab_label="Add big task"
-            app:fab_size="mini"
-            tools:ignore="VectorDrawableCompat" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+            <!--android:id="@+id/fab_big_task"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_add"-->
+            <!--app:fab_label="Add big task"-->
+            <!--app:fab_size="mini"-->
+            <!--tools:ignore="VectorDrawableCompat" />-->
 
-    </com.github.clans.fab.FloatingActionMenu>
+    <!--</com.github.clans.fab.FloatingActionMenu>-->
 
 </android.support.constraint.ConstraintLayout>

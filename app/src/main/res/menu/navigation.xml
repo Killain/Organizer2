@@ -9,6 +9,7 @@
 
     <item
         android:id="@+id/tasks_fragment_bottom_nav"
+        android:icon="@drawable/ic_tasks_list"
         android:title="Tasks">
     </item>
 

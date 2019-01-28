@@ -1,6 +1,6 @@
 package com.killain.organizer.packages.task_watcher;
 
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.Task;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 

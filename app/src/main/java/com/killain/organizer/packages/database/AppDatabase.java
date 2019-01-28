@@ -10,8 +10,8 @@ import android.support.annotation.NonNull;
 
 import com.killain.organizer.packages.interfaces.SubTaskDAO;
 import com.killain.organizer.packages.interfaces.TaskDAO;
-import com.killain.organizer.packages.tasks.SubTask;
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.models.SubTask;
+import com.killain.organizer.packages.models.Task;
 
 @Database(entities = {Task.class, SubTask.class}, version = 2, exportSchema = false)
 

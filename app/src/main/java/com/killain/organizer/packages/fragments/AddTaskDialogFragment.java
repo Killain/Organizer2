@@ -17,33 +17,45 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.killain.organizer.R;
+import com.killain.organizer.packages.enums.AdapterRefreshType;
+import com.killain.organizer.packages.interactors.TaskInteractor;
 import com.killain.organizer.packages.recyclerview_adapters.RVAHelper;
+import com.killain.organizer.packages.ui_tools.DateHelper;
 import com.killain.organizer.packages.ui_tools.DatePicker;
 import com.killain.organizer.packages.interactors.DataManager;
-import com.killain.organizer.packages.interfaces.IAdapterRefresher;
-import com.killain.organizer.packages.tasks.SubTask;
-import com.killain.organizer.packages.tasks.Task;
+import com.killain.organizer.packages.interfaces.FragmentUIHandler;
+import com.killain.organizer.packages.models.SubTask;
+import com.killain.organizer.packages.models.Task;
+
+import org.threeten.bp.LocalDate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddTaskDialogFragment extends Fragment implements
-        View.OnClickListener, IAdapterRefresher {
+        View.OnClickListener,
+        FragmentUIHandler {
 
     public Context context;
     private EditText user_txt;
-    public String task_type = null;
     private Calendar day_calendar, time_calendar;
-    private TasksFragment _fragment;
     private TimePickerDialog timePickerDialog;
     private SimpleDateFormat sdf_date, sdf_time;
     private DataManager dataManager;
     public RelativeLayout relativeLayout;
     private RecyclerView recyclerView;
     private RVAHelper rvaHelper;
+    private TextView cal_txt_btn;
+    FragmentUIHandler fragmentUIHandler;
+    private LocalDate date;
+    private TaskInteractor taskInteractor;
+    Task task;
+    private String formatted_date, cal_btn_preview;
+    private DateHelper dateHelper;
 
     public AddTaskDialogFragment() { }
 
@@ -51,8 +63,8 @@ public class AddTaskDialogFragment extends Fragment implements
         return new AddTaskDialogFragment();
     }
 
-    public void setListener(TasksFragment fragment) {
-        _fragment = fragment;
+    public void setListener(FragmentUIHandler fragmentUIHandler) {
+        this.fragmentUIHandler = fragmentUIHandler;
     }
 
     @Override
@@ -64,26 +76,32 @@ public class AddTaskDialogFragment extends Fragment implements
         sdf_time = new SimpleDateFormat("HH:mm");
         context = getContext();
         dataManager = new DataManager(getContext(), null);
+
     }
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.custom_dialog, container, false);
 
         relativeLayout = view.findViewById(R.id.relative_layout_dialog);
         recyclerView = view.findViewById(R.id.recyclerView_dialog);
+        cal_txt_btn = view.findViewById(R.id.dialog_txt_cal_btn);
         rvaHelper = new RVAHelper(context, this);
         rvaHelper.setListener(this);
         recyclerView.setAdapter(rvaHelper);
         TextView add_element = view.findViewById(R.id.add_element_dialog);
-        ImageButton datepicker_btn = view.findViewById(R.id.cal_btn);
+
         ImageButton set = view.findViewById(R.id.save_task_btn);
         user_txt = view.findViewById(R.id.task_edit_text);
+        user_txt.setVerticalScrollBarEnabled(false);
+        cal_txt_btn.setText(cal_btn_preview);
+        cal_txt_btn.setOnClickListener(this);
         add_element.setOnClickListener(this);
         set.setOnClickListener(this);
-        datepicker_btn.setOnClickListener(this);
 
         return view;
     }
@@ -95,25 +113,45 @@ public class AddTaskDialogFragment extends Fragment implements
         switch (view.getId()) {
 
             case R.id.save_task_btn:
-                Task task = new Task();
-                task.setTask_string(user_txt.getText().toString());
-                task.setDate(sdf_date.format(day_calendar.getTime()));
-                task.setTime(sdf_time.format(time_calendar.getTime()));
-                task.setNotificationShowed(false);
-                task.setCompleted(false);
 
-                ArrayList<SubTask> subTaskArrayList = rvaHelper.getArrayList();
+                if (formatted_date == null || formatted_date.equals("")) {
+                    task = new Task();
+                    task.setTask_string(user_txt.getText().toString());
+                    task.setDate(sdf_date.format(day_calendar.getTime()));
+                    task.setTime(sdf_time.format(time_calendar.getTime()));
+                    task.setNotificationShowed(false);
+                    task.setCompleted(false);
 
-                if (subTaskArrayList != null) {
-                    for (SubTask subTask : subTaskArrayList) {
-                        task.setHasReference(true);
-                        subTask.setReference(task.getTask_string());
-                        dataManager.addSubTask(subTask);
+                    ArrayList<SubTask> subTaskArrayList = rvaHelper.getArrayList();
+
+                    if (subTaskArrayList != null) {
+                        for (SubTask subTask : subTaskArrayList) {
+                            task.setHasReference(true);
+                            subTask.setReference(task.getTask_string());
+                            dataManager.addSubTask(subTask);
+                        }
+                    }
+                } else {
+                    task = new Task();
+                    task.setTask_string(user_txt.getText().toString());
+                    task.setDate(sdf_date.format(day_calendar.getTime()));
+                    task.setTime(sdf_time.format(time_calendar.getTime()));
+                    task.setNotificationShowed(false);
+                    task.setCompleted(false);
+
+                    ArrayList<SubTask> subTaskArrayList = rvaHelper.getArrayList();
+
+                    if (subTaskArrayList != null) {
+                        for (SubTask subTask : subTaskArrayList) {
+                            task.setHasReference(true);
+                            subTask.setReference(task.getTask_string());
+                            dataManager.addSubTask(subTask);
+                        }
                     }
                 }
 
                 dataManager.addTask(task);
-                _fragment.refreshAdapterOnAdd(1);
+                fragmentUIHandler.refreshAdapterOnAdd(1, AdapterRefreshType.RELOAD_FROM_DB);
                 changeToParentFragment();
                 break;
 
@@ -121,18 +159,23 @@ public class AddTaskDialogFragment extends Fragment implements
                 changeToParentFragment();
                 break;
 
-            case R.id.cal_btn:
+            case R.id.dialog_txt_cal_btn:
 
                 DatePicker datePicker = new DatePicker(getContext(), null,
-                        day_calendar.get(Calendar.YEAR),
-                        day_calendar.get(Calendar.MONTH),
-                        day_calendar.get(Calendar.DAY_OF_MONTH));
+                        date.getYear(),
+                        date.getMonthValue() - 1,
+                        date.getDayOfMonth());
+
+                dateHelper.setDate(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+
                 datePicker.getDatePicker().init(
-                        day_calendar.get(Calendar.YEAR),
-                        day_calendar.get(Calendar.MONTH),
-                        day_calendar.get(Calendar.DAY_OF_MONTH),
-                        (view1, year, monthOfYear, dayOfMonth) ->
-                                day_calendar.set(year, monthOfYear, dayOfMonth));
+                        date.getYear(),
+                        date.getMonthValue() - 1,
+                        date.getDayOfMonth(),
+                        (view1, year, monthOfYear, dayOfMonth) -> {
+                            day_calendar.set(year, monthOfYear, dayOfMonth);
+                            dateHelper.setDate(year, monthOfYear + 1, dayOfMonth);
+                        });
                 datePicker.show();
 
                 datePicker.setButton(DialogInterface.BUTTON_POSITIVE, "OK",
@@ -141,6 +184,9 @@ public class AddTaskDialogFragment extends Fragment implements
                             (view12, hourOfDay, minute) -> {
                                 time_calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 time_calendar.set(Calendar.MINUTE, minute);
+                                dateHelper.setTime(hourOfDay, minute);
+                                cal_btn_preview = dateHelper.getFullDateWithTime();
+                                cal_txt_btn.setText(cal_btn_preview);
                             },
                             time_calendar.get(Calendar.HOUR_OF_DAY),
                             time_calendar.get(Calendar.MINUTE), true);
@@ -161,18 +207,64 @@ public class AddTaskDialogFragment extends Fragment implements
     private void changeToParentFragment() {
         getActivity().getSupportFragmentManager().popBackStack();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            _fragment.setNewAlphaInActivity();
-            _fragment.UISwitch();
+            fragmentUIHandler.setNewAlpha();
+            fragmentUIHandler.UISwitch();
         }
     }
 
     @Override
-    public void refreshAdapterOnAdd(int position) {
+    public View getBackground() {
+        return null;
+    }
+
+    @Override
+    public void refreshAdapterOnAdd(int position, AdapterRefreshType refreshType) {
         rvaHelper.notifyItemInserted(position);
     }
 
     @Override
     public void refreshAdapterOnDelete(int position) {
         rvaHelper.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void setNewAlpha() {
+        //Useless here. Just leave it as it is.
+    }
+
+    @Override
+    public void UISwitch() {
+        //Useless here. Just leave it as it is.
+    }
+
+    public void setDate(LocalDate date) {
+        dateHelper = new DateHelper();
+        this.date = date;
+        cal_btn_preview = dateHelper.localDateToString(date);
+        formatted_date = getConvertedDateString(date);
+    }
+
+    private String getConvertedDateString(LocalDate localDate) {
+
+        int secondaryDay = localDate.getDayOfMonth();
+        int secondaryMonth = localDate.getMonthValue();
+
+        String mMonth;
+        if (secondaryMonth <= 9) {
+            mMonth = "0" + secondaryMonth;
+        } else {
+            mMonth = Integer.toString(localDate.getMonthValue());
+        }
+
+        String mDay;
+        if (secondaryDay <= 9) {
+            mDay = "0" + secondaryDay;
+        } else {
+            mDay = Integer.toString(localDate.getDayOfMonth());
+        }
+
+        String mYear = Integer.toString(localDate.getYear());
+
+        return mDay + "/" + mMonth + "/" + mYear;
     }
 }

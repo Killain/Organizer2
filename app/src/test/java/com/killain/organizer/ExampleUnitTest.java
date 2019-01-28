@@ -1,11 +1,6 @@
 package com.killain.organizer;
 
-import com.killain.organizer.packages.fragments.TasksFragment;
-import com.killain.organizer.packages.tasks.Task;
-
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 

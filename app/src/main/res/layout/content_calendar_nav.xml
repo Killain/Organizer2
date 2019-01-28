@@ -24,23 +24,12 @@
             app:expandedTitleMarginStart="48dp"
             app:expandedTitleMarginEnd="64dp">
 
-            <!--<CalendarView-->
-                <!--android:id="@+id/main.backdrop"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_gravity="bottom"-->
-                <!--android:layout_marginTop="56dp"-->
-                <!--android:fitsSystemWindows="true"-->
-                <!--app:layout_collapseMode="parallax"-->
-                <!--tools:ignore="ContentDescription" />-->
-
             <com.prolificinteractive.materialcalendarview.MaterialCalendarView
                 android:id="@+id/main_backdrop"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:mcv_showOtherDates="defaults"
-                app:mcv_arrowColor="@color/secondaryPrimary"
-                app:mcv_selectionColor="@color/secondaryPrimary"
+                app:mcv_selectionColor="@color/colorAccent"
                 app:mcv_selectionMode="single"
                 app:mcv_weekDayLabels="@array/week"
                 app:mcv_monthLabels="@array/month"
@@ -62,6 +51,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginEnd="15dp"
                     android:layout_weight="1"
+                    app:mcv_selectionColor="@color/colorAccent"
                     app:mcv_calendarMode="week"
                     app:mcv_selectionMode="single"
                     app:mcv_tileHeight="24dp"
