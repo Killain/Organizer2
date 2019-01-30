@@ -106,6 +106,8 @@ public class AddTaskDialogFragment extends Fragment implements
         return view;
     }
 
+
+
     @SuppressLint("NewApi")
     @Override
     public void onClick(View view) {

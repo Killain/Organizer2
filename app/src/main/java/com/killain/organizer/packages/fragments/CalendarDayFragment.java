@@ -47,6 +47,14 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
     }
 
     @Override
+    public void onStart() {
+        if (adapter != null && todayString != null) {
+            adapter.loadItemsByDate(todayString);
+        }
+        super.onStart();
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -154,5 +162,10 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
         mYear = Integer.toString(localDate.getYear());
 
         return mDay + "/" + mMonth + "/" + mYear;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 }

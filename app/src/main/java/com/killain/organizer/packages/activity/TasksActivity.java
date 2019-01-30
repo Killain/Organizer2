@@ -29,7 +29,6 @@ public class TasksActivity extends AppCompatActivity
         navigationView.setOnNavigationItemSelectedListener(this);
         navigationView.setSelectedItemId(R.id.tasks_fragment_bottom_nav);
 
-
         fragment = new TasksFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.content_frame_layout, fragment);

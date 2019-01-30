@@ -8,6 +8,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,11 +89,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
 //        new NotificationInteractor(getContext());
         rvInteractor.bind();
 
-          //TODO: Testing zone
-//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-//        mItemTouchHelper = new ItemTouchHelper(callback);
-//        mItemTouchHelper.attachToRecyclerView(recyclerView);
-//        recyclerView.setAdapter(adapter);
+        relative_layout.setOnClickListener(v -> Log.d("TasksFragment", "Layout touched"));
 
         fab_simple_task.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -107,6 +104,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
             transaction.replace(R.id.dialog_frame_layout, dialog);
             transaction.addToBackStack("child");
             transaction.commit();
+            tasksFragmentInstance.onPause();
         });
 
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
