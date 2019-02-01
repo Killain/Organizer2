@@ -18,15 +18,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.interactors.RecyclerViewInteractor;
 import com.killain.organizer.packages.interactors.UIInteractor;
 import com.killain.organizer.packages.recyclerview_adapters.RVCardAdapter;
 import com.killain.organizer.R;
-import com.killain.organizer.packages.interactors.NotificationInteractor;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
-import com.killain.organizer.packages.ui_tools.DateHelper;
 import com.killain.organizer.packages.views.HeaderTextView;
 
 import org.threeten.bp.LocalDate;
@@ -86,6 +83,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
         adapter = new RVCardAdapter (getContext(), rvInteractor.getListener(), this);
         rvInteractor.setAdapter(adapter);
         adapter.loadItemsByState();
+        adapter.setParentFragment(tasksFragmentInstance);
 //        new NotificationInteractor(getContext());
         rvInteractor.bind();
 

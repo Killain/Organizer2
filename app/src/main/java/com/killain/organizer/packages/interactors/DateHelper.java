@@ -1,21 +1,19 @@
-package com.killain.organizer.packages.ui_tools;
+package com.killain.organizer.packages.interactors;
+
+import com.killain.organizer.packages.enums.FormatDateOutput;
 
 import org.threeten.bp.LocalDate;
 
 public class DateHelper {
 
-    private String day, month, result, time, date, minute, hour;
+    private String day, month, result, time, date, task_date, minute, hour;
+    private int int_hour, int_minute;
     private LocalDate localDate;
+    private char zeroChar = 0;
 
     public DateHelper() {
 
     }
-
-//    public String getFormattedDate() {
-//        formatMonth();
-//        result = "Today, " + day + " " + formatMonth();
-//        return result;
-//    }
 
     private String formatMonth() {
         switch (month) {
@@ -70,7 +68,7 @@ public class DateHelper {
         return month;
     }
 
-    public String localDateToString(LocalDate localDate) {
+    public String localDateToString(LocalDate localDate, FormatDateOutput formatDateOutput) {
         LocalDate compareLocalDate = LocalDate.now();
 
         if (compareLocalDate.getYear() == localDate.getYear() &&
@@ -94,9 +92,18 @@ public class DateHelper {
         }
     }
 
-    public void setDate(int year, int month, int day ) {
+    public String localDateToTaskString(LocalDate localDate) {
+            String year = Integer.toString(localDate.getYear());
+            String month = Integer.toString(localDate.getMonthValue());
+            String day = Integer.toString(localDate.getDayOfMonth());
+            task_date = day + "/" + month + "/" + year;
+            return task_date;
+    }
+
+    public void setDate(int year, int month, int day) {
         localDate = LocalDate.of(year, month, day);
-        date = localDateToString(localDate);
+        date = localDateToString(localDate, FormatDateOutput.DEFAULT);
+        task_date = localDateToTaskString(localDate);
     }
 
     public void setTime(int hour, int minute) {
@@ -119,7 +126,15 @@ public class DateHelper {
         return result;
     }
 
-    public String convertStringToLocalDate(String raw_date) {
+    public String getTaskDate() {
+        return task_date;
+    }
+
+    public String getTaskTime() {
+        return hour + ":" + minute;
+    }
+
+    public String convertStringToLocalDate(String raw_date, FormatDateOutput formatDateOutput) {
         String formatted_sdf_day = raw_date.substring(0, 2);
         String formatted_sdf_month = raw_date.substring(3, 5);
         String formatted_sdf_year = raw_date.substring(6, raw_date.length());
@@ -128,6 +143,56 @@ public class DateHelper {
                                            Integer.parseInt(formatted_sdf_month),
                                            Integer.parseInt(formatted_sdf_day));
 
-        return localDateToString(localDate);
+        return localDateToString(localDate, formatDateOutput);
+    }
+
+    public void convertStringToLocalDate(String raw_date, String raw_time) {
+        String formatted_sdf_day = raw_date.substring(0, 2);
+        String formatted_sdf_month = raw_date.substring(3, 5);
+        String formatted_sdf_year = raw_date.substring(6, raw_date.length());
+
+        String formatted_sdf_hour = raw_time.substring(0, 2);
+        String formatted_sdf_minute = raw_time.substring(3, 5);
+
+        int_hour = Integer.parseInt(formatted_sdf_hour);
+        int_minute = Integer.parseInt(formatted_sdf_minute);
+
+        localDate = LocalDate.of(Integer.parseInt(formatted_sdf_year),
+                Integer.parseInt(formatted_sdf_month),
+                Integer.parseInt(formatted_sdf_day));
+    }
+
+    public int getYear() {
+        return localDate.getYear();
+    }
+
+    public int getMonth() {
+        return localDate.getMonthValue();
+    }
+
+    public int getDayOfMonth() {
+        return localDate.getDayOfMonth();
+    }
+
+    public int getInt_hour() {
+        return int_hour;
+    }
+
+    public int getInt_minute() {
+        return int_minute;
+    }
+
+    private void convertToDecimal(String day, String month) {
+        if (day.charAt(0) == zeroChar) {
+            StringBuilder sb = new StringBuilder(day);
+            sb.deleteCharAt(0);
+            day = sb.toString();
+        }
+
+        if (month.charAt(0) == zeroChar) {
+            StringBuilder stringBuilder = new StringBuilder(month);
+            stringBuilder.deleteCharAt(0);
+            month = stringBuilder.toString();
+        }
     }
 }

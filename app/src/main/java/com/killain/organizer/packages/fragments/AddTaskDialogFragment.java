@@ -10,20 +10,23 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
+import com.killain.organizer.packages.enums.FormatDateOutput;
 import com.killain.organizer.packages.interactors.TaskInteractor;
 import com.killain.organizer.packages.recyclerview_adapters.RVAHelper;
-import com.killain.organizer.packages.ui_tools.DateHelper;
+import com.killain.organizer.packages.interactors.DateHelper;
 import com.killain.organizer.packages.ui_tools.DatePicker;
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
@@ -53,6 +56,7 @@ public class AddTaskDialogFragment extends Fragment implements
     FragmentUIHandler fragmentUIHandler;
     private LocalDate date;
     private TaskInteractor taskInteractor;
+    private GestureDetector gestureDetector;
     Task task;
     private String formatted_date, cal_btn_preview;
     private DateHelper dateHelper;
@@ -79,6 +83,7 @@ public class AddTaskDialogFragment extends Fragment implements
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -95,6 +100,49 @@ public class AddTaskDialogFragment extends Fragment implements
         recyclerView.setAdapter(rvaHelper);
         TextView add_element = view.findViewById(R.id.add_element_dialog);
 
+        gestureDetector = new GestureDetector(getContext(), new GestureDetector.OnGestureListener() {
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public void onShowPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                return false;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                return false;
+            }
+        });
+
+        relativeLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d("STASYAN", "ONTOUCH");
+                gestureDetector.onTouchEvent(event);
+                return true;
+            }
+        });
+
+
+
         ImageButton set = view.findViewById(R.id.save_task_btn);
         user_txt = view.findViewById(R.id.task_edit_text);
         user_txt.setVerticalScrollBarEnabled(false);
@@ -105,8 +153,6 @@ public class AddTaskDialogFragment extends Fragment implements
 
         return view;
     }
-
-
 
     @SuppressLint("NewApi")
     @Override
@@ -174,9 +220,12 @@ public class AddTaskDialogFragment extends Fragment implements
                         date.getYear(),
                         date.getMonthValue() - 1,
                         date.getDayOfMonth(),
-                        (view1, year, monthOfYear, dayOfMonth) -> {
-                            day_calendar.set(year, monthOfYear, dayOfMonth);
-                            dateHelper.setDate(year, monthOfYear + 1, dayOfMonth);
+                        new android.widget.DatePicker.OnDateChangedListener() {
+                            @Override
+                            public void onDateChanged(android.widget.DatePicker view1, int year, int monthOfYear, int dayOfMonth) {
+                                day_calendar.set(year, monthOfYear, dayOfMonth);
+                                dateHelper.setDate(year, monthOfYear + 1, dayOfMonth);
+                            }
                         });
                 datePicker.show();
 
@@ -242,7 +291,7 @@ public class AddTaskDialogFragment extends Fragment implements
     public void setDate(LocalDate date) {
         dateHelper = new DateHelper();
         this.date = date;
-        cal_btn_preview = dateHelper.localDateToString(date);
+        cal_btn_preview = dateHelper.localDateToString(date, FormatDateOutput.FORMAT_DATE_OUTPUT);
         formatted_date = getConvertedDateString(date);
     }
 

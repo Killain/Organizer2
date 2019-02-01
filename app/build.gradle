@@ -57,7 +57,7 @@ dependencies {
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
     //Dagger
-    implementation  'com.google.dagger:dagger:2.13'
+    implementation 'com.google.dagger:dagger:2.13'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
 
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'

@@ -1,16 +1,24 @@
 package com.killain.organizer.packages.recyclerview_adapters;
 
 import android.annotation.SuppressLint;
+
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,13 +27,16 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
+import com.killain.organizer.packages.enums.FormatDateOutput;
+
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperViewHolder;
 import com.killain.organizer.packages.interfaces.OnStartDragListener;
 import com.killain.organizer.packages.models.Task;
-import com.killain.organizer.packages.ui_tools.DateHelper;
+import com.killain.organizer.packages.interactors.DateHelper;
+import com.killain.organizer.packages.ui_tools.DatePicker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +53,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
     private Task task, delayed_task;
     private DataManager dataManager;
     private DateHelper dateHelper;
+    private Fragment fragment;
 
     public RVCardAdapter(Context context,
                          OnStartDragListener dragListener,
@@ -82,15 +94,15 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             RVSubTask RVSubTask = new RVSubTask(context, task);
             holder.recycler_view.setVisibility(View.VISIBLE);
             holder.recycler_view.setAdapter(RVSubTask);
-            holder.card_text_upper.setText(task.getTask_string());
+            holder.card_edit_text_upper.setText(task.getTask_string());
 //            holder.card_date.setText(task.getDate());
-            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate()));
+            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate(), FormatDateOutput.FORMAT_DATE_OUTPUT));
             holder.card_time.setText(task.getTime());
         } else {
-            holder.card_text_upper.setText(task.getTask_string());
+            holder.card_edit_text_upper.setText(task.getTask_string());
             holder.card_time.setText(task.getTime());
 //            holder.card_date.setText(task.getDate());
-            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate()));
+            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate(), FormatDateOutput.FORMAT_DATE_OUTPUT));
         }
 
         holder.expand_area.setVisibility(View.GONE);
@@ -120,13 +132,48 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             dataManager.deleteTask(task);
         });
 
-        holder.done_btn.setOnClickListener(v -> {
-            task.setCompleted(true);
-            dataManager.updateTask(task);
-            arrayList.remove(position);
-            removeAt(position, task);
-            fragmentUIHandler.refreshAdapterOnDelete(position);
-            loadItemsByState();
+        holder.edit_btn.setOnClickListener(v -> {
+            holder.card_edit_text_upper.setEnabled(true);
+            dateHelper.convertStringToLocalDate(task.getDate(), task.getTime());
+            holder.date_and_time_block.setOnClickListener(v1 -> {
+//                DatePicker datePicker = new DatePicker(context,
+//                        new DatePicker.OnDateSetListener() {
+//                            @Override
+//                            public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
+//                                dateHelper.setDate(year, month + 1, dayOfMonth);
+//                                task.setDate(dateHelper.getTaskDate());
+//                            }
+//                        },
+//                        dateHelper.getYear(),
+//                        dateHelper.getMonth(),
+//                        dateHelper.getDayOfMonth());
+
+                DatePicker datePicker = new DatePicker(context, null,
+                        dateHelper.getYear(),
+                        dateHelper.getMonth() - 1,
+                        dateHelper.getDayOfMonth());
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    datePicker.setOnDateSetListener((view, year, month, dayOfMonth) -> {
+                        dateHelper.setDate(year, month + 1, dayOfMonth);
+                            task.setDate(dateHelper.getTaskDate());
+                    });
+                }
+
+                datePicker.show();
+
+                datePicker.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog, which) -> {
+                    TimePickerDialog timePickerDialog = new TimePickerDialog(context,
+                            (view, hourOfDay, minute) -> {
+                        dateHelper.setTime(hourOfDay, minute);
+                        task.setTime(dateHelper.getTaskTime());
+                    },
+                            dateHelper.getInt_hour(),
+                            dateHelper.getInt_minute(),
+                            true);
+                    timePickerDialog.show();
+                });
+            });
         });
     }
 
@@ -198,26 +245,34 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         }
     }
 
+    public void setParentFragment(Fragment fragment) {
+        this.fragment = fragment;
+    }
+
     class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
         final ConstraintLayout expand_area;
-        final TextView card_text_upper;
+        final EditText card_edit_text_upper;
         final TextView card_date, card_time;
         final ImageView dragger;
         final ImageButton delete_btn;
 //        final RelativeLayout extra_expand_area;
         final RecyclerView recycler_view;
-        final ImageButton done_btn;
+//        final ImageButton done_btn;
+        final ImageButton edit_btn;
+        final ConstraintLayout date_and_time_block;
 
         CustomViewHolder(View itemView)
         {
             super(itemView);
-            done_btn = itemView.findViewById(R.id.task_done_btn);
+//            done_btn = itemView.findViewById(R.id.task_done_btn);
             recycler_view = itemView.findViewById(R.id.expanded_bottom_subtask_recyclerview);
             expand_area = itemView.findViewById(R.id.expanded_bottom);
             card_time = itemView.findViewById(R.id.card_time);
+            edit_btn = itemView.findViewById(R.id.card_expanded_bottom_edit);
+            date_and_time_block = itemView.findViewById(R.id.card_date_and_time_layout_block);
             delete_btn = itemView.findViewById(R.id.expanded_bottom_delete_img_btn);
-            card_text_upper = itemView.findViewById(R.id.card_text);
+            card_edit_text_upper = itemView.findViewById(R.id.card_text);
             dragger = itemView.findViewById(R.id.img_view_drag);
 //            extra_expand_area = itemView.findViewById(R.id.extra_expanded_bottom);
             card_date = itemView.findViewById(R.id.card_date);
