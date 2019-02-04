@@ -76,7 +76,7 @@ public class DataManager {
         return (ArrayList<SubTask>) subTaskList;
     }
 
-    public ArrayList<Task> getAllTasksByDate(String date) {
+    public ArrayList<Task> getAllTasksByDate(long date) {
         taskList = taskDAO.getAllTasksByDate(date);
         return (ArrayList<Task>) taskList;
     }

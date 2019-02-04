@@ -35,6 +35,7 @@ public class NotificationInteractor {
     private DataManager dataManager;
     private Calendar calendar;
     private String dateString, timeString;
+    private DateHelper dateHelper;
 
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sdf_date = new SimpleDateFormat("dd/MM/yyyy");
@@ -46,6 +47,7 @@ public class NotificationInteractor {
         this.context = context;
         dataManager = new DataManager(context, null);
         arrayList = dataManager.getTasksByState(false, false);
+        dateHelper = new DateHelper();
         subscription();
     }
 
@@ -103,7 +105,7 @@ public class NotificationInteractor {
 
             @Override
             public void onNext(Task task) {
-                if (task.getDate().equals(dateString) && task.getTime().equals(timeString)) {
+                if (dateHelper.longToString(task.getDate()).equals(dateString) && task.getTime().equals(timeString)) {
                     Log.d("LOGGER", "Date and time are equal, condition is passed");
                     createNotification(task.getTask_string(), task.getTask_string(), task);
                 }
@@ -124,7 +126,6 @@ public class NotificationInteractor {
 
     private Observable<Task> getObservable() {
         return Observable.fromIterable(arrayList);
-
     }
 
 //    private void reloadTasks() {

@@ -1,99 +1,47 @@
 package com.killain.organizer.packages.interactors;
 
-import android.widget.EditText;
+import android.content.Context;
 
+import com.killain.organizer.packages.models.SubTask;
 import com.killain.organizer.packages.models.Task;
 
+import java.util.ArrayList;
+
 public class TaskInteractor {
+
     private Task task;
-    private EditText task_text;
-    private String task_date;
-    private String task_time;
-    private boolean task_notification_showed;
-    private boolean task_completed;
-    private boolean task_reference;
+    private DataManager dataManager;
 
-    public TaskInteractor() {
+    public TaskInteractor(Context context) {
         task = new Task();
+        dataManager = new DataManager(context, null);
     }
 
-    public TaskInteractor(EditText task_text, String task_date,
-                          String task_time,
-                          boolean task_completed,
-                          boolean task_notification_showed) {
+    public Task createTask(String task_text,
+                           long task_date,
+                           String task_time,
+                           boolean task_is_notification_showed,
+                           boolean task_completed,
+                           ArrayList<SubTask> arrayList) {
 
-        this.task_text = task_text;
-        this.task_date = task_date;
-        this.task_time = task_time;
-        this.task_completed = task_completed;
-        this.task_notification_showed = task_notification_showed;
-
-        task = new Task();
-
-        task.setTask_string(task_text.getText().toString());
-        task.setTime(task_time);
+        task.setTask_string(task_text);
         task.setDate(task_date);
+        task.setTime(task_time);
+        task.setNotificationShowed(task_is_notification_showed);
         task.setCompleted(task_completed);
-        task.setNotificationShowed(task_notification_showed);
 
-    }
+        if (arrayList != null) {
+            for (SubTask subTask : arrayList) {
+                task.setHasReference(true);
+                subTask.setReference(task.getTask_string());
+                dataManager.addSubTask(subTask);
+            }
+        }
 
-
-    public Task getTask() {
         return task;
     }
 
-    public EditText getTask_text() {
-        return task_text;
-    }
-
-    public void setTask_text(EditText task_text) {
-        this.task_text = task_text;
-        task.setTask_string(task_text.getText().toString());
-    }
-
-    public String getTask_date() {
-        return task_date;
-    }
-
-    public void setTask_date(String task_date) {
-        this.task_date = task_date;
-        task.setDate(task_date);
-    }
-
-    public String getTask_time() {
-        return task_time;
-    }
-
-    public void setTask_time(String task_time) {
-        this.task_time = task_time;
-        task.setTime(task_time);
-    }
-
-    public boolean isTask_notification_showed() {
-        return task_notification_showed;
-    }
-
-    public void setTask_notification_showed(boolean task_notification_showed) {
-        this.task_notification_showed = task_notification_showed;
-        task.setNotificationShowed(task_notification_showed);
-    }
-
-    public boolean isTask_completed() {
-        return task_completed;
-    }
-
-    public void setTask_completed(boolean task_completed) {
-        this.task_completed = task_completed;
-        task.setCompleted(task_completed);
-    }
-
-    public boolean isTask_reference() {
-        return task_reference;
-    }
-
-    public void setTask_reference(boolean task_reference) {
-        this.task_reference = task_reference;
-        task.setHasReference(task_reference);
+    public Task getCreatedTask() {
+        return task;
     }
 }

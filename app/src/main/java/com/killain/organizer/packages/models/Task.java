@@ -19,7 +19,7 @@ public class Task implements Cloneable {
     private int group_tag;
 
     @ColumnInfo(name = "task_date")
-    private String date;
+    private long date;
 
     @ColumnInfo(name = "task_time")
     private String time;
@@ -101,11 +101,11 @@ public class Task implements Cloneable {
         isNotificationShowed = notificationShowed;
     }
 
-    public String getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

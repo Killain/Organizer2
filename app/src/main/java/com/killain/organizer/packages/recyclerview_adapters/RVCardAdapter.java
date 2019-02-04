@@ -27,7 +27,6 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
-import com.killain.organizer.packages.enums.FormatDateOutput;
 
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
@@ -96,13 +95,13 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             holder.recycler_view.setAdapter(RVSubTask);
             holder.card_edit_text_upper.setText(task.getTask_string());
 //            holder.card_date.setText(task.getDate());
-            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate(), FormatDateOutput.FORMAT_DATE_OUTPUT));
+            holder.card_date.setText(dateHelper.getConvertedDateFromLong(task.getDate()));
             holder.card_time.setText(task.getTime());
         } else {
             holder.card_edit_text_upper.setText(task.getTask_string());
             holder.card_time.setText(task.getTime());
 //            holder.card_date.setText(task.getDate());
-            holder.card_date.setText(dateHelper.convertStringToLocalDate(task.getDate(), FormatDateOutput.FORMAT_DATE_OUTPUT));
+            holder.card_date.setText(dateHelper.getConvertedDateFromLong(task.getDate()));
         }
 
         holder.expand_area.setVisibility(View.GONE);
@@ -134,31 +133,24 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
 
         holder.edit_btn.setOnClickListener(v -> {
             holder.card_edit_text_upper.setEnabled(true);
-            dateHelper.convertStringToLocalDate(task.getDate(), task.getTime());
+            dateHelper.setDateAndTime(task.getDate(), task.getTime());
             holder.date_and_time_block.setOnClickListener(v1 -> {
-//                DatePicker datePicker = new DatePicker(context,
-//                        new DatePicker.OnDateSetListener() {
-//                            @Override
-//                            public void onDateSet(android.widget.DatePicker view, int year, int month, int dayOfMonth) {
-//                                dateHelper.setDate(year, month + 1, dayOfMonth);
-//                                task.setDate(dateHelper.getTaskDate());
-//                            }
-//                        },
-//                        dateHelper.getYear(),
-//                        dateHelper.getMonth(),
-//                        dateHelper.getDayOfMonth());
+
+                dateHelper.longToString(task.getDate());
 
                 DatePicker datePicker = new DatePicker(context, null,
                         dateHelper.getYear(),
-                        dateHelper.getMonth() - 1,
+                        dateHelper.getMonth(),
                         dateHelper.getDayOfMonth());
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    datePicker.setOnDateSetListener((view, year, month, dayOfMonth) -> {
-                        dateHelper.setDate(year, month + 1, dayOfMonth);
+                datePicker.getDatePicker().init(
+                        dateHelper.getYear(),
+                        dateHelper.getMonth(),
+                        dateHelper.getDayOfMonth(),
+                        (view, year, monthOfYear, dayOfMonth) -> {
+                            dateHelper.setDate(year, monthOfYear + 1, dayOfMonth);
                             task.setDate(dateHelper.getTaskDate());
-                    });
-                }
+                        });
 
                 datePicker.show();
 
@@ -205,7 +197,8 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-        delayedTaskArrayList.add(delayed_task);
+//        delayedTaskArrayList.add(delayed_task);
+        delayedTaskArrayList.add(t);
         task.setDeleted(true);
         arrayList.remove(position);
         Snackbar.make(fragmentUIHandler.getBackground(), "Deleted", Snackbar.LENGTH_LONG)
@@ -228,7 +221,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         arrayList = dataManager.getTasksByState(false, false);
     }
 
-    public void loadItemsByDate(String date) {
+    public void loadItemsByDate(long date) {
         arrayList = dataManager.getAllTasksByDate(date);
     }
 

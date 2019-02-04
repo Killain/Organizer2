@@ -25,7 +25,7 @@ public interface TaskDAO {
     List<Task> getAllTasks();
 
     @Query("SELECT * FROM task WHERE task_date = :date AND task_is_completed == 0 AND is_deleted == 0")
-    List<Task> getAllTasksByDate(String date);
+    List<Task> getAllTasksByDate(long date);
 
     @Query("SELECT * FROM task WHERE task_is_completed == :isCompleted AND is_deleted == :isDeleted")
     List<Task> getAllTasksByState(boolean isCompleted, boolean isDeleted);

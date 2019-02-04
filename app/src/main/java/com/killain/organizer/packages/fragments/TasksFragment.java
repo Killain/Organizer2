@@ -28,6 +28,8 @@ import com.killain.organizer.packages.views.HeaderTextView;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.Calendar;
+
 public class TasksFragment extends Fragment implements FragmentUIHandler {
 
     private int oldScrollYPosition = 0;
@@ -43,6 +45,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
     public RVCardAdapter adapter;
     public TasksFragment tasksFragmentInstance;
     private UIInteractor uiInteractor;
+    private Calendar calendar;
 
     public TasksFragment() {
     }
@@ -55,6 +58,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         tasksFragmentInstance = TasksFragment.this;
+        calendar = Calendar.getInstance();
     }
 
     @Override
@@ -96,7 +100,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
             UISwitch();
             Fragment dialog = AddTaskDialogFragment.newInstance();
             ((AddTaskDialogFragment) dialog).setListener(this);
-            ((AddTaskDialogFragment) dialog).setDate(LocalDate.now());
+            ((AddTaskDialogFragment) dialog).setDate(calendar);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.setCustomAnimations(R.anim.slide_up, R.anim.slide_out);
             transaction.replace(R.id.dialog_frame_layout, dialog);
@@ -139,12 +143,6 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void setNewAlpha() {
-        //TODO: Testing
-//        if (relative_layout.getAlpha() == 1f) {
-//            relative_layout.setAlpha(0.3f);
-//        } else {
-//            relative_layout.setAlpha(1f);
-//        }
         uiInteractor.setNewAlpha();
     }
 

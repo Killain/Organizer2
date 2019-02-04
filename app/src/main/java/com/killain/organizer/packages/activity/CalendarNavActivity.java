@@ -19,6 +19,8 @@ import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import org.threeten.bp.LocalDate;
 
+import java.util.Calendar;
+
 public class CalendarNavActivity extends AppCompatActivity
         implements OnDateSelectedListener,
         AppBarLayout.OnOffsetChangedListener,
@@ -28,6 +30,7 @@ public class CalendarNavActivity extends AppCompatActivity
     private MaterialCalendarView main_calendarView, small_calendarView;
     public AppBarLayout appBarLayout;
     public BottomNavigationView bottomNavigationView;
+    private Calendar calendar;
 
     private String mYear;
     private String mMonth;
@@ -43,10 +46,17 @@ public class CalendarNavActivity extends AppCompatActivity
         bottomNavigationView = findViewById(R.id.navigation_cal);
         bottomNavigationView.setSelectedItemId(R.id.calendar_fragment_bottom_nav);
         appBarLayout = findViewById(R.id.main_appbar);
-        LocalDate localDate = LocalDate.now();
+
+        calendar = Calendar.getInstance();
+        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+
+        LocalDate localDate = LocalDate.of(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
 
         fragment = new CalendarDayFragment();
-        fragment.setSelectedDate(localDate);
+        fragment.setCalendar(calendar);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.cal_frg_frame_layout, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -72,10 +82,13 @@ public class CalendarNavActivity extends AppCompatActivity
     public void onDateSelected(@NonNull MaterialCalendarView materialCalendarView,
                                @NonNull CalendarDay calendarDay, boolean b) {
         String date = getConvertedDate(calendarDay);
+        calendar.set(Calendar.DAY_OF_MONTH, calendarDay.getDay());
+        calendar.set(Calendar.MONTH, calendarDay.getMonth());
+        calendar.set(Calendar.YEAR, calendarDay.getYear());
         small_calendarView.setSelectedDate(calendarDay);
         main_calendarView.setSelectedDate(calendarDay);
-        fragment.setSelectedDate(calendarDay.getDate());
-        fragment.reloadTasksOnDate(date);
+        fragment.setCalendar(calendar);
+        fragment.reloadTasksOnDate(calendar.getTimeInMillis());
     }
 
     @Override
@@ -111,7 +124,6 @@ public class CalendarNavActivity extends AppCompatActivity
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
         if (Math.abs(verticalOffset)-appBarLayout.getTotalScrollRange() == 0)
         {
             //  Collapsed
@@ -124,7 +136,6 @@ public class CalendarNavActivity extends AppCompatActivity
             small_calendarView.setVisibility(View.GONE);
             small_calendarView.animate().alpha(0.0f);
         }
-
     }
 
     @Override
