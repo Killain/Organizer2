@@ -47,8 +47,16 @@ public class CalendarNavActivity extends AppCompatActivity
         bottomNavigationView.setSelectedItemId(R.id.calendar_fragment_bottom_nav);
         appBarLayout = findViewById(R.id.main_appbar);
 
+        //task = 1549411200000
+
         calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+//        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+        calendar.set(Calendar.HOUR, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.getTimeInMillis();
 
         LocalDate localDate = LocalDate.of(
                 calendar.get(Calendar.YEAR),
@@ -57,6 +65,7 @@ public class CalendarNavActivity extends AppCompatActivity
 
         fragment = new CalendarDayFragment();
         fragment.setCalendar(calendar);
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.cal_frg_frame_layout, fragment);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

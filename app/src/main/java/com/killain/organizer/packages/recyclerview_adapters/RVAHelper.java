@@ -126,8 +126,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
     }
 
     private void refreshItems(ArrayList<SubTask> array) {
-        ArrayList<SubTask> secondary = new ArrayList<>();
-        secondary.addAll(array);
+        ArrayList<SubTask> secondary = new ArrayList<>(array);
         arrayList.clear();
         arrayList.addAll(secondary);
         fragment.refreshAdapterOnAdd(index, AdapterRefreshType.DEFAULT);

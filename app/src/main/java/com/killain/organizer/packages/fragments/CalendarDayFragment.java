@@ -51,8 +51,8 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
 
     @Override
     public void onStart() {
-        if (adapter != null && todayString != null) {
-            adapter.loadItemsByDate(calendar.getTimeInMillis());
+        if (adapter != null) {
+            refreshAdapterOnAdd(1, AdapterRefreshType.RELOAD_FROM_DB);
         }
         super.onStart();
     }
@@ -100,6 +100,7 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
     @Override
     public void refreshAdapterOnAdd(int position, AdapterRefreshType adapterRefreshType) {
         adapter.loadItemsByDate(calendar.getTimeInMillis());
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -142,7 +143,6 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
-//        todayString = getConvertedDate(localDate);
     }
 
 //    private String getConvertedDate(LocalDate localDate) {

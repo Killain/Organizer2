@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.enums.FormatDateOutput;
@@ -61,6 +62,7 @@ public class AddTaskDialogFragment extends Fragment implements
     Task task;
     private String formatted_date, cal_btn_preview;
     private DateHelper dateHelper;
+    private TasksFragment fragment;
 
     public AddTaskDialogFragment() { }
 
@@ -81,7 +83,6 @@ public class AddTaskDialogFragment extends Fragment implements
         sdf_time = new SimpleDateFormat("HH:mm");
         context = getContext();
         dataManager = new DataManager(getContext(), null);
-
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -166,6 +167,11 @@ public class AddTaskDialogFragment extends Fragment implements
                     return;
 
                 } else {
+                    calendar.set(Calendar.HOUR, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    calendar.set(Calendar.MILLISECOND, 0);
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
                     TaskInteractor taskInteractor = new TaskInteractor(context);
                     task = taskInteractor.createTask(user_txt.getText().toString(),
                             calendar.getTimeInMillis(),
@@ -228,12 +234,6 @@ public class AddTaskDialogFragment extends Fragment implements
                         calendar.get(Calendar.MONTH),
                         calendar.get(Calendar.DAY_OF_MONTH));
 
-//                check
-//                dateHelper.setDate(
-//                        calendar.get(Calendar.YEAR),
-//                        calendar.get(Calendar.MONTH),
-//                        calendar.get(Calendar.DAY_OF_MONTH));
-
                 datePicker.getDatePicker().init(
                         calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
@@ -262,7 +262,10 @@ public class AddTaskDialogFragment extends Fragment implements
                 break;
 
             case R.id.add_element_dialog:
-                recyclerView.setVisibility(View.VISIBLE);
+
+                //Костыль. Fab появляется, когда происходит клик по кнопке.
+                FloatingActionButton fab = getActivity().findViewById(R.id.fab_simple_task);
+                fab.setVisibility(View.GONE);
                 rvaHelper.addToRV();
                 break;
 
@@ -271,6 +274,7 @@ public class AddTaskDialogFragment extends Fragment implements
         }
     }
 
+    //BackStack gets popped when the method below is invoked.
     private void changeToParentFragment() {
         getActivity().getSupportFragmentManager().popBackStack();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -284,6 +288,7 @@ public class AddTaskDialogFragment extends Fragment implements
         return null;
     }
 
+    //Method for refreshing and updating RecyclerView when new item is added
     @Override
     public void refreshAdapterOnAdd(int position, AdapterRefreshType refreshType) {
         rvaHelper.notifyItemInserted(position);
@@ -311,6 +316,7 @@ public class AddTaskDialogFragment extends Fragment implements
         cal_btn_preview = dateHelper.calendarToString(this.calendar, FormatDateOutput.FORMAT_DATE_OUTPUT);
 //        formatted_date = getConvertedDateString(date);
     }
+
 
 //    private String getConvertedDateString(LocalDate localDate) {
 //
