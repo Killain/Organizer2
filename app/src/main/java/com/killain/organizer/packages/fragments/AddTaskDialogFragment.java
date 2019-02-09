@@ -157,7 +157,7 @@ public class AddTaskDialogFragment extends BottomSheetDialogFragment implements
                                     dateHelper.getLong(),
                                     sdf_time.format(time_calendar.getTime()),
                                     false, false,
-                                    rvaHelper.getArrayList());
+                                    rvaHelper.getArrayList(), dialogType);
                         if (dialogType == DialogType.ADD_NEW_TASK) {
                             dataManager.addTask(task);
                         } else if (dialogType == DialogType.EDIT_EXISTING_TASK) {

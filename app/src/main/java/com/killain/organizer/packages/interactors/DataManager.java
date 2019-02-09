@@ -11,6 +11,7 @@ import com.killain.organizer.packages.interfaces.TaskDAO;
 import com.killain.organizer.packages.models.SubTask;
 import com.killain.organizer.packages.models.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,6 +75,10 @@ public class DataManager {
 
     public void updateSubTask(SubTask subTask) {
         subTaskDAO.updateSubTask(subTask);
+    }
+
+    public void deleteSubTask(SubTask subTask) {
+        subTaskDAO.deleteSubTask(subTask);
     }
 
     public void deleteTask(Task task) {
