@@ -1,8 +1,11 @@
 package com.killain.organizer.packages.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -25,6 +28,29 @@ public class TasksActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drawer);
 
+        Thread t = new Thread(() -> {
+            //  Initialize SharedPreferences
+            SharedPreferences getPrefs = PreferenceManager
+                    .getDefaultSharedPreferences(getBaseContext());
+            //  Create a new boolean and preference and set it to true
+            boolean isFirstStart = getPrefs.getBoolean("firstStart", true);
+            //  If the activity has never started before...
+            if (isFirstStart) {
+                //  Launch app intro
+                final Intent i = new Intent(TasksActivity.this, IntroActivity.class);
+                runOnUiThread(() -> startActivity(i));
+                //  Make a new preferences editor
+                SharedPreferences.Editor e = getPrefs.edit();
+                //  Edit preference to make it false because we don't want this to run again
+                e.putBoolean("firstStart", false);
+                //  Apply changes
+                e.apply();
+            }
+        });
+
+        // Start the thread
+        t.start();
+
         navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
         navigationView.setSelectedItemId(R.id.tasks_fragment_bottom_nav);
@@ -46,10 +72,6 @@ public class TasksActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setNewAlpha();
-            fragment.UISwitch();
-        }
         super.onBackPressed();
     }
 
@@ -57,17 +79,6 @@ public class TasksActivity extends AppCompatActivity
     protected void onPause() {
 //        startService(new Intent(this, NotificationService.class));
         super.onPause();
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void setNewAlpha() {
-        if (fragment.relative_layout.getAlpha() == 1f) {
-            //TODO: refers to public variable
-            fragment.relative_layout.setAlpha(0.3f);
-        } else {
-            fragment.relative_layout.setAlpha(1f);
-        }
     }
 
     @Override

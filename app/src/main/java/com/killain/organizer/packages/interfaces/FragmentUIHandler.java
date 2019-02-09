@@ -8,6 +8,4 @@ public interface FragmentUIHandler {
     View getBackground();
     void refreshAdapterOnAdd(int position, AdapterRefreshType refreshType);
     void refreshAdapterOnDelete(int position);
-    void setNewAlpha();
-    void UISwitch();
 }

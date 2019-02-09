@@ -47,8 +47,21 @@ public class DataManager {
         return (ArrayList<Task>) taskList;
     }
 
+    public ArrayList<Task> getUndeletedTasks() {
+        taskList = taskDAO.getUndeletedTasks();
+        return (ArrayList<Task>) taskList;
+    }
+
     public void updateTask (Task task) {
         taskDAO.updateTask(task);
+    }
+
+    public void customUpdateTask(Task task, String oldText) {
+        taskDAO.customUpdateTask(task.getTask_string(),
+                task.getDate(), task.getTime(),
+                task.isCompleted(), task.isNotificationShowed(),
+                task.isDeleted(), task.isHasReference(),
+                oldText);
     }
 
     public void addTask(Task task) {

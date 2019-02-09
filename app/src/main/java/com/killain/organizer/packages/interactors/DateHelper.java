@@ -2,6 +2,7 @@ package com.killain.organizer.packages.interactors;
 
 import com.killain.organizer.packages.enums.FormatDateOutput;
 
+import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.LocalDate;
 
 import java.text.SimpleDateFormat;
@@ -14,11 +15,9 @@ public class DateHelper {
     private int int_hour, int_minute;
     private LocalDate localDate;
     private char zeroChar = 0;
-    private Calendar local_calendar;
-    private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     public DateHelper() {
-        local_calendar = Calendar.getInstance();
+        localDate = LocalDate.now();
     }
 
     private String formatMonth(int month) {
@@ -75,35 +74,23 @@ public class DateHelper {
         return convertedMonth;
     }
 
-    public String calendarToString(Calendar calendar, FormatDateOutput formatDateOutput) {
-        Calendar compareCalendar = Calendar.getInstance();
-        local_calendar = calendar;
-        if (compareCalendar.get(Calendar.YEAR) == calendar.get(Calendar.YEAR) &&
-                compareCalendar.get(Calendar.MONTH) == calendar.get(Calendar.MONTH) &&
-                compareCalendar.get(Calendar.DAY_OF_MONTH) == calendar.get(Calendar.DAY_OF_MONTH)) {
+    public String localDateToString(LocalDate localDate, FormatDateOutput formatDateOutput) {
+        LocalDate compare = LocalDate.now();
+
+        if (compare.getYear() == localDate.getYear() &&
+                compare.getMonthValue() == localDate.getMonthValue() &&
+                compare.getDayOfMonth() == localDate.getDayOfMonth() &&
+                formatDateOutput == FormatDateOutput.FORMAT_DATE_OUTPUT) {
             result = "Today";
             return result;
         } else {
-//            String dayOfWeek_raw = String.valueOf(local_calendar.get(Calendar.DAY_OF_WEEK));
-//            String dow_raw = dayOfWeek_raw.substring(0, 3).toLowerCase();
-//            String dow_raw = dayOfWeek_raw.substring(0, 2).toLowerCase();
-//            char first_letter_dow = Character.toUpperCase(dow_raw.charAt(0));
-//            String dow = first_letter_dow + dow_raw.substring(1, dow_raw.length());
-            String dow = convertCalendarDOW(local_calendar.get(Calendar.DAY_OF_WEEK));
-            String dayOfMonth = Integer.toString(local_calendar.get(Calendar.DAY_OF_MONTH));
-//            String month_raw = Integer.toString(local_calendar.get(Calendar.MONTH));
-//            String month_raw_2 = month_raw.substring(0, 3).toLowerCase();
-//            char first_letter = Character.toUpperCase(month_raw_2.charAt(0));
-//            String month = first_letter + month_raw_2.substring(1, month_raw_2.length());
-            String month = formatMonth(local_calendar.get(Calendar.MONTH));
-            String year = Integer.toString(local_calendar.get(Calendar.YEAR));
+            String dow = convertLocalDateDayOfWeek(localDate.getDayOfWeek());
+            String dayOfMonth = Integer.toString(localDate.getDayOfMonth());
+            String month = formatMonth(localDate.getMonthValue());
+            String year = Integer.toString(localDate.getYear());
             result = dow + ", " + month + " " + dayOfMonth + ", " + year;
             return result;
         }
-    }
-
-    public long convertCalendarToLong(Calendar calendar) {
-        return calendar.getTimeInMillis();
     }
 
     public String localDateToTaskString(LocalDate localDate) {
@@ -115,9 +102,7 @@ public class DateHelper {
     }
 
     public void setDate(int year, int month, int day) {
-        local_calendar.set(Calendar.YEAR, year);
-        local_calendar.set(Calendar.MONTH, month);
-        local_calendar.set(Calendar.DAY_OF_MONTH, day);
+        localDate = LocalDate.of(year, month, day);
     }
 
     public void setTime(int hour, int minute) {
@@ -136,110 +121,71 @@ public class DateHelper {
     }
 
     public String getFullDateWithTime() {
-        date = calendarToString(local_calendar, FormatDateOutput.DEFAULT);
+        date = localDateToString(localDate, FormatDateOutput.DEFAULT);
         result = date + " " + time;
         return result;
     }
 
-    public long getTaskDate() {
-        return local_calendar.getTimeInMillis();
-    }
-
-    public String getTaskTime() {
-        return hour + ":" + minute;
-    }
-
-    public void setDateAndTime(long long_date, String raw_time) {
-        String formatted_sdf_hour = raw_time.substring(0, 2);
-        String formatted_sdf_minute = raw_time.substring(3, 5);
-
-        int_hour = Integer.parseInt(formatted_sdf_hour);
-        int_minute = Integer.parseInt(formatted_sdf_minute);
-
-        local_calendar.setTimeInMillis(long_date);
-    }
-
     public int getYear() {
-        return local_calendar.get(Calendar.YEAR);
+        return localDate.getYear();
     }
 
     public int getMonth() {
-        return local_calendar.get(Calendar.MONTH);
+        return localDate.getMonthValue();
     }
 
     public int getDayOfMonth() {
-        return local_calendar.get(Calendar.DAY_OF_MONTH);
-    }
-
-    public int getInt_hour() {
-        return int_hour;
-    }
-
-    public int getInt_minute() {
-        return int_minute;
-    }
-
-    private void convertToDecimal(String day, String month) {
-        if (day.charAt(0) == zeroChar) {
-            StringBuilder sb = new StringBuilder(day);
-            sb.deleteCharAt(0);
-            day = sb.toString();
-        }
-
-        if (month.charAt(0) == zeroChar) {
-            StringBuilder stringBuilder = new StringBuilder(month);
-            stringBuilder.deleteCharAt(0);
-            month = stringBuilder.toString();
-        }
-    }
-
-    public String longToString(long long_date) {
-        local_calendar.setTimeInMillis(long_date);
-        Date date = new Date();
-        date.setTime(local_calendar.getTimeInMillis());
-        return sdf.format(date.getTime());
+        return localDate.getDayOfMonth();
     }
 
     public String getConvertedDateFromLong(long long_date) {
-        local_calendar.setTimeInMillis(long_date);
-        return calendarToString(local_calendar, FormatDateOutput.FORMAT_DATE_OUTPUT);
+        localDate = LocalDate.ofEpochDay(long_date);
+        return localDateToString(localDate, FormatDateOutput.FORMAT_DATE_OUTPUT);
     }
 
-    private String convertCalendarDOW(int dow) {
+    private String convertLocalDateDayOfWeek(DayOfWeek dayOfWeek) {
 
         String converted_dow = null;
 
-        switch (dow) {
+        switch (dayOfWeek) {
 
-            case 1:
+            case MONDAY:
                 converted_dow = "Mon";
                 break;
 
-            case 2:
+            case TUESDAY:
                 converted_dow = "Tue";
                 break;
 
-            case 3:
+            case WEDNESDAY:
                 converted_dow = "Wed";
                 break;
 
-            case 4:
+            case THURSDAY:
                 converted_dow =  "Thu";
                 break;
 
-            case 5:
+            case FRIDAY:
                 converted_dow = "Fri";
                 break;
 
-            case 6:
+            case SATURDAY:
                 converted_dow = "Sat";
                 break;
-            case 7:
+            case SUNDAY:
                 converted_dow = "Sun";
                 break;
 
                 default: break;
         }
         return converted_dow;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
+    }
+
+    public long getLong() {
+        return localDate.toEpochDay();
     }
 }

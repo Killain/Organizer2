@@ -2,6 +2,7 @@ package com.killain.organizer.packages.recyclerview_adapters;
 
 import android.annotation.SuppressLint;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -28,6 +29,9 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
 
+import com.killain.organizer.packages.enums.DialogType;
+import com.killain.organizer.packages.fragments.AddTaskDialogFragment;
+import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.interactors.DataManager;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
 import com.killain.organizer.packages.interfaces.ItemTouchHelperAdapter;
@@ -52,7 +56,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
     private Task task, delayed_task;
     private DataManager dataManager;
     private DateHelper dateHelper;
-    private Fragment fragment;
+    private TasksFragment fragment;
 
     public RVCardAdapter(Context context,
                          OnStartDragListener dragListener,
@@ -64,15 +68,6 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         dataManager = new DataManager(context, null);
         delayedTaskArrayList = new ArrayList<>();
         dateHelper = new DateHelper();
-    }
-
-    public RVCardAdapter() {}
-
-    public static RVCardAdapter newInstance(Context context,
-                                            OnStartDragListener dragListener,
-                                            FragmentUIHandler fragmentUIHandler) {
-
-        return new RVCardAdapter(context, dragListener, fragmentUIHandler);
     }
 
     @NonNull
@@ -131,42 +126,11 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             dataManager.deleteTask(task);
         });
 
-        holder.edit_btn.setOnClickListener(v -> {
-            holder.card_edit_text_upper.setEnabled(true);
-            dateHelper.setDateAndTime(task.getDate(), task.getTime());
-            holder.date_and_time_block.setOnClickListener(v1 -> {
-
-                dateHelper.longToString(task.getDate());
-
-                DatePicker datePicker = new DatePicker(context, null,
-                        dateHelper.getYear(),
-                        dateHelper.getMonth(),
-                        dateHelper.getDayOfMonth());
-
-                datePicker.getDatePicker().init(
-                        dateHelper.getYear(),
-                        dateHelper.getMonth(),
-                        dateHelper.getDayOfMonth(),
-                        (view, year, monthOfYear, dayOfMonth) -> {
-                            dateHelper.setDate(year, monthOfYear + 1, dayOfMonth);
-                            task.setDate(dateHelper.getTaskDate());
-                        });
-
-                datePicker.show();
-
-                datePicker.setButton(DialogInterface.BUTTON_POSITIVE, "OK", (dialog, which) -> {
-                    TimePickerDialog timePickerDialog = new TimePickerDialog(context,
-                            (view, hourOfDay, minute) -> {
-                        dateHelper.setTime(hourOfDay, minute);
-                        task.setTime(dateHelper.getTaskTime());
-                    },
-                            dateHelper.getInt_hour(),
-                            dateHelper.getInt_minute(),
-                            true);
-                    timePickerDialog.show();
-                });
-            });
-        });
+        holder.edit_btn.setOnClickListener(v ->
+                fragment.callDialogFragment(DialogType.EDIT_EXISTING_TASK,
+                        fragmentUIHandler,
+                        task.getDate(),
+                        task));
     }
 
     @Override
@@ -187,6 +151,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
     @Override
     public void onItemDismiss(int position) {
         removeAt(position, arrayList.get(position));
+        notifyDataSetChanged();
     }
 
     private void removeAt(int position, Task t) {
@@ -197,7 +162,6 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         } catch (CloneNotSupportedException e) {
             e.printStackTrace();
         }
-//        delayedTaskArrayList.add(delayed_task);
         delayedTaskArrayList.add(t);
         task.setDeleted(true);
         arrayList.remove(position);
@@ -213,12 +177,11 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
                     delayedTaskArrayList.remove(0);
                     fragmentUIHandler.refreshAdapterOnAdd(position, AdapterRefreshType.DEFAULT);
                 }).show();
-//        dataManager.updateTask(task);
         fragmentUIHandler.refreshAdapterOnDelete(position);
     }
 
     public void loadItemsByState() {
-        arrayList = dataManager.getTasksByState(false, false);
+        arrayList = dataManager.getUndeletedTasks();
     }
 
     public void loadItemsByDate(long date) {
@@ -238,7 +201,7 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
         }
     }
 
-    public void setParentFragment(Fragment fragment) {
+    public void setParentFragment(TasksFragment fragment) {
         this.fragment = fragment;
     }
 

@@ -31,6 +31,7 @@ public class CalendarNavActivity extends AppCompatActivity
     public AppBarLayout appBarLayout;
     public BottomNavigationView bottomNavigationView;
     private Calendar calendar;
+    private LocalDate localDate;
 
     private String mYear;
     private String mMonth;
@@ -47,24 +48,19 @@ public class CalendarNavActivity extends AppCompatActivity
         bottomNavigationView.setSelectedItemId(R.id.calendar_fragment_bottom_nav);
         appBarLayout = findViewById(R.id.main_appbar);
 
-        //task = 1549411200000
+//        calendar = Calendar.getInstance();
+////        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
+//        calendar.set(Calendar.HOUR, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//        calendar.set(Calendar.HOUR_OF_DAY, 0);
+//        calendar.getTimeInMillis();
 
-        calendar = Calendar.getInstance();
-//        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
-        calendar.set(Calendar.HOUR, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.getTimeInMillis();
-
-        LocalDate localDate = LocalDate.of(
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH));
+        localDate = LocalDate.now();
 
         fragment = new CalendarDayFragment();
-        fragment.setCalendar(calendar);
+        fragment.setCalendar(localDate);
 
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.add(R.id.cal_frg_frame_layout, fragment);
@@ -91,21 +87,20 @@ public class CalendarNavActivity extends AppCompatActivity
     public void onDateSelected(@NonNull MaterialCalendarView materialCalendarView,
                                @NonNull CalendarDay calendarDay, boolean b) {
         String date = getConvertedDate(calendarDay);
-        calendar.set(Calendar.DAY_OF_MONTH, calendarDay.getDay());
-        calendar.set(Calendar.MONTH, calendarDay.getMonth());
-        calendar.set(Calendar.YEAR, calendarDay.getYear());
+//        calendar.set(Calendar.DAY_OF_MONTH, calendarDay.getDay());
+//        calendar.set(Calendar.MONTH, calendarDay.getMonth());
+//        calendar.set(Calendar.YEAR, calendarDay.getYear());
+        localDate = LocalDate.of(calendarDay.getYear(),
+                calendarDay.getMonth(),
+                calendarDay.getDay());
         small_calendarView.setSelectedDate(calendarDay);
         main_calendarView.setSelectedDate(calendarDay);
-        fragment.setCalendar(calendar);
-        fragment.reloadTasksOnDate(calendar.getTimeInMillis());
+        fragment.setCalendar(localDate);
+        fragment.reloadTasksOnDate(localDate.toEpochDay());
     }
 
     @Override
     public void onBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fragment.setNewAlpha();
-            fragment.UISwitch();
-        }
         super.onBackPressed();
     }
 

@@ -8,12 +8,15 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
+
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.models.Task;
 
+import org.threeten.bp.LocalDate;
+
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,12 +33,14 @@ public class NotificationInteractor {
     private static final String NOTIFICATION_CHANNEL_ID = "1";
 
     private int count = 0;
-    private Date date;
+    public Date date;
 
     private DataManager dataManager;
-    private Calendar calendar;
+    public Calendar calendar;
     private String dateString, timeString;
-    private DateHelper dateHelper;
+    public DateHelper dateHelper;
+    public LocalDate localDate;
+    private long comparison;
 
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sdf_date = new SimpleDateFormat("dd/MM/yyyy");
@@ -51,11 +56,39 @@ public class NotificationInteractor {
         subscription();
     }
 
+    private Observer<Task> getObserver() {
+        return new Observer<Task>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                getCurrentDateAndTime();
+            }
+
+            @Override
+            public void onNext(Task task) {
+                if (comparison == task.getDate() && task.getTime().equals(timeString)) {
+                    Log.d("LOGGER", "Date and time are equal, condition is passed");
+                    if (!task.isNotificationShowed()) {
+                        createNotification(task.getTask_string(), task.getTask_string(), task);
+                    }
+                }
+                Log.d("LOGGER", task.getTask_string());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                subscription();
+            }
+        };
+    }
+
     private void createNotification(String title, String message, Task task) {
 
         Log.d("Notification MESSAGE", "createNotification() is called");
-
-        if (!task.isNotificationShowed()) {
 
             NotificationManager notificationManager = (NotificationManager) context
                     .getSystemService(Context.NOTIFICATION_SERVICE);
@@ -81,9 +114,9 @@ public class NotificationInteractor {
                     .setSound(null)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setAutoCancel(true)
-                    .setContentText(message)
+                    .setContentText("Organizer app")
                     .setContentTitle(message)
-                    .setContentInfo("this is content info");
+                    .setContentInfo("");
 
             if (notificationManager != null) {
                 notificationManager.notify((int)(System.currentTimeMillis()/1000), mBuilder.build());
@@ -93,50 +126,18 @@ public class NotificationInteractor {
             dataManager.updateTask(task);
             arrayList.remove(task);
             count++;
-        }
-    }
 
-    private Observer<Task> getObserver() {
-        return new Observer<Task>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-                getCurrentDateAndTime();
-            }
-
-            @Override
-            public void onNext(Task task) {
-                if (dateHelper.longToString(task.getDate()).equals(dateString) && task.getTime().equals(timeString)) {
-                    Log.d("LOGGER", "Date and time are equal, condition is passed");
-                    createNotification(task.getTask_string(), task.getTask_string(), task);
-                }
-                Log.d("LOGGER", task.getTask_string());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                subscription();
-            }
-        };
     }
 
     private Observable<Task> getObservable() {
         return Observable.fromIterable(arrayList);
     }
 
-//    private void reloadTasks() {
-//        arrayList = dataManager.getTasksByState(false, false);
-//        taskObservable = Observable.fromIterable(arrayList);
-//    }
-
     private void getCurrentDateAndTime() {
         calendar = Calendar.getInstance();
+        localDate = LocalDate.now();
+        comparison = localDate.toEpochDay();
         date = calendar.getTime();
-        dateString = sdf_date.format(date);
         timeString = sdf_time.format(date);
     }
 

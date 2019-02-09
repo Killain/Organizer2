@@ -54,12 +54,6 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
 
         holder.recycler_edittext.setText(item.getText());
 
-//        if (arrayList.size() > 0) {
-//            fragment.save_btn.setVisibility(View.VISIBLE);
-//        } else if (arrayList.size() <= 0) {
-//            fragment.save_btn.setVisibility(View.GONE);
-//        }
-
         if (holder.recycler_edittext.getText().toString().trim().length() == 0)
         {
             holder.recycler_edittext.requestFocus();
@@ -77,16 +71,18 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                arrayList.get(position).setText(s.toString());
+//                arrayList.get(position).setText(s.toString());
+                arrayList.get(holder.getAdapterPosition()).setText(s.toString());
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-               arrayList.get(position).setText(s.toString());
+//               arrayList.get(position).setText(s.toString());
+                arrayList.get(holder.getAdapterPosition()).setText(s.toString());
             }
         });
 
-        holder.delete_btn.setOnClickListener(v -> removeAt(position));
+        holder.delete_btn.setOnClickListener(v -> removeAt(item, holder.getAdapterPosition()));
     }
 
     public void addToRV() {
@@ -113,9 +109,13 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
         this.fragment = fragment;
     }
 
-    private void removeAt(int position) {
-        arrayList.remove(position);
-        fragmentUIHandler.refreshAdapterOnDelete(position);
+    private void removeAt(SubTask subTask, int position) {
+//        if (position == 0) {
+//            arrayList.remove(position);
+//            fragmentUIHandler.refreshAdapterOnDelete(position);
+//        }
+            arrayList.remove(subTask);
+            fragmentUIHandler.refreshAdapterOnDelete(position);
     }
 
     public void setSubTasksReference(String reference) {
@@ -130,6 +130,12 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
         arrayList.clear();
         arrayList.addAll(secondary);
         fragment.refreshAdapterOnAdd(index, AdapterRefreshType.DEFAULT);
+    }
+
+    public void loadSubtasksByReference(String reference) {
+        DataManager dataManager = new DataManager(context, null);
+        arrayList = dataManager.getSubTasksByReference(reference);
+        fragmentUIHandler.refreshAdapterOnAdd(0, AdapterRefreshType.RELOAD_FROM_DB);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

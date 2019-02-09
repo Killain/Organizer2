@@ -1,14 +1,22 @@
-<RelativeLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.killain.organizer.packages.fragments.CalendarDayFragment">
+    tools:context="com.killain.organizer.packages.fragments.CalendarDayFragment"
+    android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:id="@+id/cal_fragment_parent_layout">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:id="@+id/cal_fragment_scroll_view">
 
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
@@ -24,4 +32,6 @@
 
     </ScrollView>
 
-</RelativeLayout>
+    </RelativeLayout>
+
+</FrameLayout>

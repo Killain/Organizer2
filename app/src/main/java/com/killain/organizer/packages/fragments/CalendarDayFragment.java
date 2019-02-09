@@ -1,45 +1,51 @@
 package com.killain.organizer.packages.fragments;
 
-import android.os.Build;
+import android.content.Context;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
+import com.killain.organizer.packages.enums.DialogType;
 import com.killain.organizer.packages.interactors.RecyclerViewInteractor;
 import com.killain.organizer.packages.interactors.UIInteractor;
 import com.killain.organizer.packages.recyclerview_adapters.RVCardAdapter;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
-import com.killain.organizer.packages.interfaces.OnStartDragListener;
+
 
 import org.threeten.bp.LocalDate;
 
 import java.util.Calendar;
+
 
 public class CalendarDayFragment extends Fragment implements FragmentUIHandler, View.OnClickListener {
 
     private ItemTouchHelper mItemTouchHelper;
     private FloatingActionButton fab;
     private RVCardAdapter adapter;
-    private String todayString;
     private LocalDate localDate;
-    private String mMonth;
-    private String mDay;
-    private String mYear;
     private RecyclerViewInteractor rvInteractor;
     private BottomNavigationView navigationView;
-    private View background;
+    private RelativeLayout background;
     private UIInteractor uiInteractor;
-    private Calendar calendar;
+
+    private Context mContext;
+    private RecyclerView recyclerView;
+    private ScrollView scrollView;
 
     public CalendarDayFragment() {
     }
@@ -63,11 +69,12 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
 
         View view = inflater.inflate(R.layout.fragment_calendar_day, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_calendar_fragment);
+        recyclerView = view.findViewById(R.id.recycler_calendar_fragment);
         fab = getActivity().findViewById(R.id.cal_frg_add_btn);
-        background = getActivity().findViewById(R.id.cal_frg_base_layout);
+        background = view.findViewById(R.id.cal_fragment_parent_layout);
         navigationView = getActivity().findViewById(R.id.navigation_cal);
-
+        mContext = getContext();
+        scrollView = view.findViewById(R.id.cal_fragment_scroll_view);
 //        adapter = new adapter(getContext(), this, this);
 //        adapter.loadItemsByDate(todayString);
 //        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
@@ -79,27 +86,22 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
         rvInteractor = new RecyclerViewInteractor(recyclerView);
         adapter = new RVCardAdapter (getContext(), rvInteractor.getListener(), this);
         rvInteractor.setAdapter(adapter);
-        adapter.loadItemsByDate(calendar.getTimeInMillis());
+        adapter.loadItemsByDate(localDate.toEpochDay());
         rvInteractor.bind();
-
         fab.setOnClickListener(this);
 
         return view;
     }
 
-//    @Override
-//    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
-//        mItemTouchHelper.startDrag(viewHolder);
-//    }
-
     @Override
     public View getBackground() {
-        return null;
+        return getActivity().findViewById(R.id.cal_frg_wrapper_layout);
     }
+
 
     @Override
     public void refreshAdapterOnAdd(int position, AdapterRefreshType adapterRefreshType) {
-        adapter.loadItemsByDate(calendar.getTimeInMillis());
+        adapter.loadItemsByDate(localDate.toEpochDay());
         adapter.notifyDataSetChanged();
     }
 
@@ -108,17 +110,6 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
         adapter.notifyItemRemoved(position);
     }
 
-    @Override
-    public void setNewAlpha() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            uiInteractor.setNewAlpha();
-        }
-    }
-
-    @Override
-    public void UISwitch() {
-        uiInteractor.UISwitch();
-    }
 
     public void reloadTasksOnDate(long date) {
         adapter.loadItemsByDate(date);
@@ -127,42 +118,28 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
 
     @Override
     public void onClick(View v) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            setNewAlpha();
+        AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+        dialog.setListener(this);
+        dialog.setDialogType(DialogType.ADD_NEW_TASK);
+        dialog.setDate(localDate);
+        if (getFragmentManager() != null) {
+            dialog.show(getFragmentManager(), "dialog");
         }
-        UISwitch();
-        Fragment dialog = AddTaskDialogFragment.newInstance();
-        ((AddTaskDialogFragment) dialog).setListener(this);
-        ((AddTaskDialogFragment) dialog).setDate(calendar);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.slide_up, R.anim.slide_out);
-        transaction.replace(R.id.cal_dialog_frame_layout, dialog);
-        transaction.addToBackStack("child");
-        transaction.commit();
     }
 
-    public void setCalendar(Calendar calendar) {
-        this.calendar = calendar;
+    public void setCalendar(LocalDate localDate) {
+        this.localDate = localDate;
     }
 
-//    private String getConvertedDate(LocalDate localDate) {
-//        int secondaryDay = localDate.getDayOfMonth();
-//        int secondaryMonth = localDate.getMonthValue();
-//
-//        if (secondaryMonth <= 9) {
-//            mMonth = "0" + secondaryMonth;
-//        } else {
-//            mMonth = Integer.toString(localDate.getMonthValue());
-//        }
-//
-//        if (secondaryDay <= 9) {
-//            mDay = "0" + secondaryDay;
-//        } else {
-//            mDay = Integer.toString(localDate.getDayOfMonth());
-//        }
-//
-//        mYear = Integer.toString(localDate.getYear());
-//
-//        return mDay + "/" + mMonth + "/" + mYear;
-//    }
+    @Override
+    public void onDestroy() {
+        adapter.onDestroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        adapter.onDestroy();
+        super.onPause();
+    }
 }
