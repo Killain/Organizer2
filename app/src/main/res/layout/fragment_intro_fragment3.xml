@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/textColor"
-    tools:context=".packages.fragments.IntroFragment1">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".packages.fragments.IntroFragment3"
+    android:background="@color/textColor">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,12 +18,21 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="48dp"
             android:layout_marginEnd="8dp"
-            android:text="Add tasks easily by clicking the button"
-            android:textAlignment="center"
+            android:text="Take a look at task"
             android:textColor="@color/colorWhite"
             android:textSize="24dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.539"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/intro_frg3_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="156dp"
+            android:visibility="visible"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,7 +49,7 @@
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <com.github.clans.fab.FloatingActionButton
-                    android:id="@+id/intro_frg2_fab"
+                    android:id="@+id/intro_frg3_fab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom|end"
@@ -57,6 +66,5 @@
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
-
 
 </FrameLayout>

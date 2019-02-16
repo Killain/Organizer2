@@ -5,12 +5,14 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 
 import com.killain.organizer.R;
+import com.killain.organizer.packages.activity.TasksActivity;
 import com.killain.organizer.packages.models.Task;
 
 import org.threeten.bp.LocalDate;
@@ -29,7 +31,7 @@ public class NotificationInteractor {
 
     private ArrayList<Task> arrayList;
     private Context context;
-    private Observable<Task> observable;
+    public Observable<Task> observable;
     private static final String NOTIFICATION_CHANNEL_ID = "1";
 
     private int count = 0;
@@ -42,8 +44,6 @@ public class NotificationInteractor {
     public LocalDate localDate;
     private long comparison;
 
-    @SuppressLint("SimpleDateFormat")
-    private SimpleDateFormat sdf_date = new SimpleDateFormat("dd/MM/yyyy");
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat sdf_time = new SimpleDateFormat("HH:mm");
 
@@ -94,7 +94,7 @@ public class NotificationInteractor {
                     .getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                int importance = NotificationManager.IMPORTANCE_LOW;
+                int importance = NotificationManager.IMPORTANCE_HIGH;
                 NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Channel", importance);
                 notificationChannel.enableLights(true);
                 notificationChannel.setLightColor(Color.RED);
@@ -106,23 +106,44 @@ public class NotificationInteractor {
             }
 
 //            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, "1");
+//            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+//                    .setDefaults(Notification.DEFAULT_ALL)
+//                    .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+//                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
+//                    .setSound(null)
+//                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+//                    .setAutoCancel(true)
+//                    .setContentText("Organizer app")
+//                    .setContentTitle(message)
+//                    .setContentInfo("");
+//
+//            if (notificationManager != null) {
+//                notificationManager.notify((int)(System.currentTimeMillis()/1000), mBuilder.build());
+//            }
 
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-                    .setDefaults(Notification.DEFAULT_ALL)
-                    .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
-                    .setVibrate(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400})
-                    .setSound(null)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setAutoCancel(true)
-                    .setContentText("Organizer app")
-                    .setContentTitle(message)
-                    .setContentInfo("");
+//        Intent notificationIntent = new Intent(this, TasksActivity.class);
+//        PendingIntent notificationPendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
-            if (notificationManager != null) {
-                notificationManager.notify((int)(System.currentTimeMillis()/1000), mBuilder.build());
-            }
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+                .setContentTitle("Reminder")
+                .setContentText(title)
+                .setSmallIcon(R.drawable.ic_notifications_active_black_24dp)
+                //.setLargeIcon(BitmapFactory.decodeResource(R.drawable.xyz))
+                .setColor(context.getResources().getColor(R.color.colorAccent))
+                .setVibrate(new long[]{0, 300, 300, 300})
+//                .setSound()
+                .setLights(Color.WHITE, 1000, 5000)
+                //.setWhen(System.currentTimeMillis())
+//                .setContentIntent(notificationPendingIntent)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(title));
 
-            task.setNotificationShowed(true);
+        if (notificationManager != null) {
+            notificationManager.notify(1, notification.build());
+        }
+
+        task.setNotificationShowed(true);
             dataManager.updateTask(task);
             arrayList.remove(task);
             count++;

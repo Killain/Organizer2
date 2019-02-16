@@ -1,23 +1,18 @@
 package com.killain.organizer.packages.fragments;
 
 import android.content.Context;
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.enums.DialogType;
@@ -25,12 +20,7 @@ import com.killain.organizer.packages.interactors.RecyclerViewInteractor;
 import com.killain.organizer.packages.interactors.UIInteractor;
 import com.killain.organizer.packages.recyclerview_adapters.RVCardAdapter;
 import com.killain.organizer.packages.interfaces.FragmentUIHandler;
-
-
 import org.threeten.bp.LocalDate;
-
-import java.util.Calendar;
-
 
 public class CalendarDayFragment extends Fragment implements FragmentUIHandler, View.OnClickListener {
 
@@ -41,11 +31,11 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
     private RecyclerViewInteractor rvInteractor;
     private BottomNavigationView navigationView;
     private RelativeLayout background;
-    private UIInteractor uiInteractor;
+    public UIInteractor uiInteractor;
 
-    private Context mContext;
-    private RecyclerView recyclerView;
-    private ScrollView scrollView;
+    public Context mContext;
+    public RecyclerView recyclerView;
+    public ScrollView scrollView;
 
     public CalendarDayFragment() {
     }
@@ -64,9 +54,16 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
     }
 
     @Override
+    public void onResume() {
+        if (adapter != null) {
+            refreshAdapterOnAdd(1, AdapterRefreshType.RELOAD_FROM_DB);
+        }
+        super.onResume();
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_calendar_day, container, false);
 
         recyclerView = view.findViewById(R.id.recycler_calendar_fragment);
@@ -75,12 +72,6 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
         navigationView = getActivity().findViewById(R.id.navigation_cal);
         mContext = getContext();
         scrollView = view.findViewById(R.id.cal_fragment_scroll_view);
-//        adapter = new adapter(getContext(), this, this);
-//        adapter.loadItemsByDate(todayString);
-//        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
-//        mItemTouchHelper = new ItemTouchHelper(callback);
-//        mItemTouchHelper.attachToRecyclerView(recyclerView);
-//        recyclerView.setAdapter(adapter);
 
         uiInteractor = new UIInteractor(background, fab, navigationView);
         rvInteractor = new RecyclerViewInteractor(recyclerView);
@@ -98,7 +89,6 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
         return getActivity().findViewById(R.id.cal_frg_wrapper_layout);
     }
 
-
     @Override
     public void refreshAdapterOnAdd(int position, AdapterRefreshType adapterRefreshType) {
         adapter.loadItemsByDate(localDate.toEpochDay());
@@ -109,7 +99,6 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
     public void refreshAdapterOnDelete(int position) {
         adapter.notifyItemRemoved(position);
     }
-
 
     public void reloadTasksOnDate(long date) {
         adapter.loadItemsByDate(date);

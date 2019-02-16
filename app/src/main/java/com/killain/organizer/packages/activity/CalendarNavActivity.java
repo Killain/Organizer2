@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.CalendarDayFragment;
 
@@ -48,14 +50,7 @@ public class CalendarNavActivity extends AppCompatActivity
         bottomNavigationView.setSelectedItemId(R.id.calendar_fragment_bottom_nav);
         appBarLayout = findViewById(R.id.main_appbar);
 
-//        calendar = Calendar.getInstance();
-////        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
-//        calendar.set(Calendar.HOUR, 0);
-//        calendar.set(Calendar.MINUTE, 0);
-//        calendar.set(Calendar.SECOND, 0);
-//        calendar.set(Calendar.MILLISECOND, 0);
-//        calendar.set(Calendar.HOUR_OF_DAY, 0);
-//        calendar.getTimeInMillis();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         localDate = LocalDate.now();
 

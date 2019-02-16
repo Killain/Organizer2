@@ -8,7 +8,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,26 +42,26 @@ public class RVSubTask extends RecyclerView.Adapter<RVSubTask.CustomViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         SubTask subTask = arrayList.get(position);
-        holder.recycler_edittext.setText(subTask.getText());
-        holder.recycler_edittext.setEnabled(true);
+        holder.recycler_item_edittext.setText(subTask.getText());
+        holder.recycler_item_edittext.setEnabled(false);
 
         if (subTask.isChecked()) {
-            holder.recycler_edittext.setAlpha(0.4f);
+            holder.recycler_item_edittext.setAlpha(0.4f);
         }
 
         holder.checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-               holder.recycler_edittext.setAlpha(0.4f);
+               holder.recycler_item_edittext.setAlpha(0.4f);
                buttonView.setChecked(true);
                dataManager.updateSubTask(subTask);
             } else {
-                holder.recycler_edittext.setAlpha(1f);
+                holder.recycler_item_edittext.setAlpha(1f);
                 buttonView.setChecked(false);
                 dataManager.updateSubTask(subTask);
             }
         });
 
-            holder.recycler_edittext.addTextChangedListener(new TextWatcher() {
+            holder.recycler_item_edittext.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -89,13 +88,13 @@ public class RVSubTask extends RecyclerView.Adapter<RVSubTask.CustomViewHolder> 
 
 public class CustomViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
-         EditText recycler_edittext;
+         EditText recycler_item_edittext;
          ImageButton delete_btn;
          CheckBox checkBox;
 
          CustomViewHolder(View itemView) {
             super(itemView);
-            recycler_edittext = itemView.findViewById(R.id.recycler_item_edittext);
+            recycler_item_edittext = itemView.findViewById(R.id.recycler_item_edittext);
             delete_btn = itemView.findViewById(R.id.delete_item_recycler);
             checkBox = itemView.findViewById(R.id.checkbox_recycler);
         }

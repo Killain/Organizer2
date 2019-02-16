@@ -1,21 +1,21 @@
 package com.killain.organizer.packages.activity;
 
-import android.content.Context;
+import android.app.Application;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.WindowManager;
 
 import com.killain.organizer.R;
 import com.killain.organizer.packages.fragments.TasksFragment;
 import com.killain.organizer.packages.services.NotificationService;
+import com.squareup.leakcanary.LeakCanary;
 
 public class TasksActivity extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -50,7 +50,7 @@ public class TasksActivity extends AppCompatActivity
 
         // Start the thread
         t.start();
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         navigationView = findViewById(R.id.navigation);
         navigationView.setOnNavigationItemSelectedListener(this);
         navigationView.setSelectedItemId(R.id.tasks_fragment_bottom_nav);

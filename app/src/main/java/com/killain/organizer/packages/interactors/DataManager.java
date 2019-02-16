@@ -98,4 +98,8 @@ public class DataManager {
         taskList = taskDAO.getAllTasksByDate(date);
         return (ArrayList<Task>) taskList;
     }
+
+    public void destroyInstance() {
+
+    }
 }

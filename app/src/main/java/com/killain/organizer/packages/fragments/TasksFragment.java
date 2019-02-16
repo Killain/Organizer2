@@ -27,7 +27,7 @@ import org.threeten.bp.LocalDate;
 
 import java.util.Calendar;
 
-public class TasksFragment extends Fragment implements FragmentUIHandler {
+public class TasksFragment extends Fragment implements FragmentUIHandler, View.OnClickListener {
 
     private int oldScrollYPosition = 0;
     public TextView noTaskTxt;
@@ -96,16 +96,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
         adapter.setParentFragment(tasksFragmentInstance);
         rvInteractor.bind();
 
-        fab_simple_task.setOnClickListener(v -> {
-            AddTaskDialogFragment dialog = new AddTaskDialogFragment();
-            dialog.setDialogType(DialogType.ADD_NEW_TASK);
-            dialog.setListener(this);
-            dialog.setDate(localDate);
-            if (getFragmentManager() != null) {
-                dialog.show(getFragmentManager(), "dialog");
-            }
-            tasksFragmentInstance.onPause();
-        });
+        fab_simple_task.setOnClickListener(this);
 
         scrollView.getViewTreeObserver().addOnScrollChangedListener(() -> {
             if (scrollView.getScrollY() > oldScrollYPosition) {
@@ -164,5 +155,17 @@ public class TasksFragment extends Fragment implements FragmentUIHandler {
     public void onPause() {
         adapter.onDestroy();
         super.onPause();
+    }
+
+    @Override
+    public void onClick(View v) {
+        AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+        dialog.setDialogType(DialogType.ADD_NEW_TASK);
+        dialog.setListener(this);
+        dialog.setDate(localDate);
+        if (getFragmentManager() != null) {
+            dialog.show(getFragmentManager(), "dialog");
+        }
+        tasksFragmentInstance.onPause();
     }
 }
