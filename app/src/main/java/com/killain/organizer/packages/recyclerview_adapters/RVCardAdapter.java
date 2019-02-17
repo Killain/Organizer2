@@ -90,14 +90,14 @@ public class RVCardAdapter extends RecyclerView.Adapter<RVCardAdapter.CustomView
             holder.recycler_view.setAdapter(RVSubTask);
             holder.card_edit_text_upper.setText(task.getTask_string());
             holder.card_edit_text_upper.setEnabled(false);
-//            holder.card_date.setText(task.getDate());
+//            holder.cardDate.setText(task.getDate());
             holder.card_date.setText(dateHelper.getConvertedDateFromLong(task.getDate()));
             holder.card_time.setText(task.getTime());
         } else {
             holder.card_edit_text_upper.setText(task.getTask_string());
             holder.card_time.setText(task.getTime());
             holder.card_edit_text_upper.setEnabled(false);
-//            holder.card_date.setText(task.getDate());
+//            holder.cardDate.setText(task.getDate());
             holder.card_date.setText(dateHelper.getConvertedDateFromLong(task.getDate()));
         }
 
