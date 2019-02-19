@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -41,7 +42,12 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.1"
+    implementation 'co.metalab.asyncawait:asyncawait:1.0.0'
+
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:cardview-v7:28.0.0'
     //fam and fab
@@ -53,19 +59,22 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     //Room orm
     implementation "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
     //RxJava
     implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
     //Dagger
-    implementation 'com.google.dagger:dagger:2.13'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.13'
+    implementation 'com.google.dagger:dagger-android:2.21'
+    implementation 'com.google.dagger:dagger-android-support:2.21' // if you use the support libraries
+    annotationProcessor 'com.google.dagger:dagger-android-processor:2.21'
+    kapt 'com.google.dagger:dagger-android-processor:2.21'
+    kapt 'com.google.dagger:dagger-compiler:2.21'
     //MaterialCalendar
     implementation 'com.github.prolificinteractive:material-calendarview:2.0.0'
     //AppIntro
     implementation 'com.github.apl-devs:appintro:v4.2.3'
-
+    //JodaTime
     implementation 'joda-time:joda-time:2.10.1'
-
+    //ThreeTenABP 
     implementation 'com.jakewharton.threetenabp:threetenabp:1.1.1'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.3'

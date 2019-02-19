@@ -93,7 +93,7 @@ public class TasksFragment extends Fragment implements FragmentUIHandler, View.O
         adapter = new RVCardAdapter (getContext(), rvInteractor.getListener(), this);
         rvInteractor.setAdapter(adapter);
         adapter.loadItemsByState();
-        adapter.setParentFragment(tasksFragmentInstance);
+        adapter.setFragment(tasksFragmentInstance);
         rvInteractor.bind();
 
         fab_simple_task.setOnClickListener(this);

@@ -83,7 +83,7 @@ public class AddTaskDialogFragment extends BottomSheetDialogFragment implements
         sdf_time = new SimpleDateFormat("HH:mm");
         localDate = LocalDate.now();
         context = getContext();
-        dataManager = new DataManager(getContext(), null);
+        dataManager = new DataManager(getContext());
     }
 
     @SuppressLint("ClickableViewAccessibility")

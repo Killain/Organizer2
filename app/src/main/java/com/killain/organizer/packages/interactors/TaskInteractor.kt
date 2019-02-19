@@ -11,7 +11,7 @@ import java.util.ArrayList
 class TaskInteractor(context: Context) {
 
     private val createdTask: Task? = Task()
-    private val dataManager: DataManager? = DataManager(context, null)
+    private val dataManager: DataManager? = DataManager(context)
     var subTaskArray: ArrayList<SubTask>? = null
     private val newArrayList: ArrayList<SubTask?> = ArrayList()
 

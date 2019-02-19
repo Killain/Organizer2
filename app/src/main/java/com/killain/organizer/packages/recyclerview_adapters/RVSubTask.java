@@ -28,7 +28,7 @@ public class RVSubTask extends RecyclerView.Adapter<RVSubTask.CustomViewHolder> 
 
     RVSubTask(Context context, Task task) {
         this.context = context;
-        dataManager = new DataManager(context, null);
+        dataManager = new DataManager(context);
         arrayList = dataManager.getSubTasksByReference(task.getTask_string());
     }
 

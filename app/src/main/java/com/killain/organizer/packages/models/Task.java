@@ -135,7 +135,6 @@ public class Task implements Cloneable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Task task = (Task) super.clone();
-        return task;
+        return super.clone();
     }
 }

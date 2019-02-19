@@ -43,7 +43,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item, parent, false);
         RVAHelper.ViewHolder vh = new RVAHelper.ViewHolder(v);
-        dataManager = new DataManager(context, null);
+        dataManager = new DataManager(context);
         return vh;
     }
 
@@ -133,7 +133,7 @@ public class RVAHelper extends RecyclerView.Adapter<RVAHelper.ViewHolder>{
     }
 
     public void loadSubtasksByReference(String reference) {
-        DataManager dataManager = new DataManager(context, null);
+        DataManager dataManager = new DataManager(context);
         arrayList = dataManager.getSubTasksByReference(reference);
         fragmentUIHandler.refreshAdapterOnAdd(0, AdapterRefreshType.RELOAD_FROM_DB);
     }
