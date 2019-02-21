@@ -15,7 +15,7 @@ public class FragmentPagerAdapter extends android.support.v4.app.FragmentPagerAd
     public Fragment getItem(int position) {
 
         if (position == 0) {
-            return TasksFragment.newInstance();
+            return TasksFragment.Companion.newInstance();
         } else if (position > 0) {
 
         }

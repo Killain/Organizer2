@@ -26,7 +26,7 @@ import org.threeten.bp.LocalDate;
 
 public class CalendarDayFragment extends Fragment implements FragmentUIHandler, View.OnClickListener {
 
-    private ItemTouchHelper mItemTouchHelper;
+//    private ItemTouchHelper mItemTouchHelper;
     private FloatingActionButton fab;
     private RVCardAdapter adapter;
     private LocalDate localDate;
@@ -113,7 +113,7 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
             AddTaskDialogFragment dialog = new AddTaskDialogFragment();
             dialog.setListener(this);
             dialog.setDialogType(DialogType.ADD_NEW_TASK);
-            dialog.setDate(localDate);
+            dialog.setParams(null, localDate);
             if (getFragmentManager() != null) {
                 dialog.show(getFragmentManager(), "dialog");
             }

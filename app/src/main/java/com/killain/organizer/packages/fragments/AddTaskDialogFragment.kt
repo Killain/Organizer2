@@ -60,7 +60,7 @@ class AddTaskDialogFragment : BottomSheetDialogFragment(), View.OnClickListener,
     override val background: View?
         get() = null
 
-    fun setListener(fragmentUIHandler: FragmentUIHandler) {
+    fun setListener(fragmentUIHandler: FragmentUIHandler?) {
         this.fragmentUIHandler = fragmentUIHandler
     }
 
@@ -210,25 +210,46 @@ class AddTaskDialogFragment : BottomSheetDialogFragment(), View.OnClickListener,
         rvaHelper?.notifyItemRemoved(position)
     }
 
-    fun setDate(localDate: LocalDate) {
-        dateHelper = DateHelper()
-        this.localDate = localDate
-        dateHelper?.setLocalDate(localDate)
-        cal_btn_preview = dateHelper?.localDateToString(this.localDate, FormatDateOutput.FORMAT_DATE_OUTPUT)
-    }
+//    fun setDate(localDate: LocalDate) {
+//        dateHelper = DateHelper()
+//        this.localDate = localDate
+//        dateHelper?.setLocalDate(localDate)
+//        cal_btn_preview = dateHelper?.localDateToString(this.localDate, FormatDateOutput.FORMAT_DATE_OUTPUT)
+//    }
+//
+//    fun setTaskAndDate(task: Task, date: Long) {
+//        this.task = task
+//        localDate = LocalDate.ofEpochDay(date)
+//        dateHelper = DateHelper()
+//        cal_btn_preview = dateHelper?.localDateToString(this.localDate,
+//                FormatDateOutput.DEFAULT) +
+//                " " +
+//                task.time
+//    }
 
-    fun setTaskAndDate(task: Task, date: Long) {
-        this.task = task
-        localDate = LocalDate.ofEpochDay(date)
-        dateHelper = DateHelper()
-        cal_btn_preview = dateHelper?.localDateToString(this.localDate,
-                FormatDateOutput.DEFAULT) +
-                " " +
-                task.time
+    fun setParams(task: Task?,date: Any?) {
+        if (task != null) {
+            this.task = task
+        }
+
+        if (date is Long) {
+            localDate = LocalDate.ofEpochDay(date)
+            dateHelper = DateHelper()
+            cal_btn_preview = dateHelper?.localDateToString(this.localDate,
+                    FormatDateOutput.DEFAULT) +
+                    " " +
+                    task?.time
+        }
+        else if (date is LocalDate) {
+            dateHelper = DateHelper()
+            localDate = date
+            dateHelper?.setLocalDate(date)
+            cal_btn_preview = dateHelper?.localDateToString(this.localDate, FormatDateOutput.FORMAT_DATE_OUTPUT)
+        }
+
     }
 
     companion object {
-
         fun newInstance(): AddTaskDialogFragment {
             return AddTaskDialogFragment()
         }

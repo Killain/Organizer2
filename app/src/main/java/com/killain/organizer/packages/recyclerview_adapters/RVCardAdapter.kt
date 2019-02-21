@@ -137,23 +137,24 @@ class RVCardAdapter(private val context: Context,
     private fun removeAt(position: Int, t: Task?) {
         task = t
         task?.list_index = position
+        task?.isDeleted = true
+
         try {
             delayedTask = task?.clone() as Task
         } catch (e: CloneNotSupportedException) {
             e.printStackTrace()
         }
 
-        delayedTaskArrayList?.add(t)
-        task?.isDeleted = true
+        delayedTaskArrayList?.add(delayedTask)
         arrayList?.removeAt(position)
         Snackbar.make(fragmentUIHandler?.background!!, "Deleted", Snackbar.LENGTH_LONG)
                 .setAction("UNDO") {
-                    task?.isDeleted = false
                     try {
-                        task = delayedTaskArrayList?.get(delayedTaskArrayList.size)?.clone() as Task
+                        task = delayedTaskArrayList?.get(delayedTaskArrayList.size - 1)?.clone() as Task
                     } catch (e: CloneNotSupportedException) {
                         e.printStackTrace()
                     }
+                    task?.isDeleted = false
 
                     arrayList?.add(task)
                     delayedTaskArrayList?.removeAt(0)
@@ -183,7 +184,8 @@ class RVCardAdapter(private val context: Context,
         }
     }
 
-    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), ItemTouchHelperViewHolder {
+    inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
+            ItemTouchHelperViewHolder {
 
         val expandArea: ConstraintLayout?
         val cardEditTextUpper: EditText?

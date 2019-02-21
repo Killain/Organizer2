@@ -81,7 +81,7 @@ public class CalendarNavActivity extends AppCompatActivity
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView materialCalendarView,
                                @NonNull CalendarDay calendarDay, boolean b) {
-        String date = getConvertedDate(calendarDay);
+//        String date = getConvertedDate(calendarDay);
 //        calendar.set(Calendar.DAY_OF_MONTH, calendarDay.getDay());
 //        calendar.set(Calendar.MONTH, calendarDay.getMonth());
 //        calendar.set(Calendar.YEAR, calendarDay.getYear());
@@ -99,27 +99,27 @@ public class CalendarNavActivity extends AppCompatActivity
         super.onBackPressed();
     }
 
-    private String getConvertedDate(CalendarDay calendarDay) {
-        LocalDate localDate = calendarDay.getDate();
-        int secondaryDay = localDate.getDayOfMonth();
-        int secondaryMonth = localDate.getMonthValue();
-
-        if (secondaryMonth <= 9) {
-            mMonth = "0" + secondaryMonth;
-        } else {
-            mMonth = Integer.toString(localDate.getMonthValue());
-        }
-
-        if (secondaryDay <= 9) {
-            mDay = "0" + secondaryDay;
-        } else {
-            mDay = Integer.toString(localDate.getDayOfMonth());
-        }
-
-        mYear = Integer.toString(localDate.getYear());
-
-        return mDay + "/" + mMonth + "/" + mYear;
-    }
+//    private String getConvertedDate(CalendarDay calendarDay) {
+//        LocalDate localDate = calendarDay.getDate();
+//        int secondaryDay = localDate.getDayOfMonth();
+//        int secondaryMonth = localDate.getMonthValue();
+//
+//        if (secondaryMonth <= 9) {
+//            mMonth = "0" + secondaryMonth;
+//        } else {
+//            mMonth = Integer.toString(localDate.getMonthValue());
+//        }
+//
+//        if (secondaryDay <= 9) {
+//            mDay = "0" + secondaryDay;
+//        } else {
+//            mDay = Integer.toString(localDate.getDayOfMonth());
+//        }
+//
+//        mYear = Integer.toString(localDate.getYear());
+//
+//        return mDay + "/" + mMonth + "/" + mYear;
+//    }
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
