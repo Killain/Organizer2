@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
@@ -159,13 +160,18 @@ public class TasksFragment extends Fragment implements FragmentUIHandler, View.O
 
     @Override
     public void onClick(View v) {
-        AddTaskDialogFragment dialog = new AddTaskDialogFragment();
-        dialog.setDialogType(DialogType.ADD_NEW_TASK);
-        dialog.setListener(this);
-        dialog.setDate(localDate);
-        if (getFragmentManager() != null) {
-            dialog.show(getFragmentManager(), "dialog");
+        try {
+            AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+            dialog.setDialogType(DialogType.ADD_NEW_TASK);
+            dialog.setListener(this);
+            dialog.setDate(localDate);
+            if (getFragmentManager() != null) {
+                dialog.show(getFragmentManager(), "dialog");
+            }
+            tasksFragmentInstance.onPause();
         }
-        tasksFragmentInstance.onPause();
+        catch (Exception e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

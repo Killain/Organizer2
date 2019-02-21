@@ -60,7 +60,7 @@ class NotificationInteractor(private val context: Context?) {
             override fun onNext(task: Task) {
                 if (comparison == task.date && task.time == timeString) {
                     Log.d("LOGGER", "Date and time are equal, condition is passed")
-                    if (!task.isNotificationShowed) {
+                    if (!task.isNotificationShowed!!) {
                         createNotification(task.task_string, task.task_string, task)
                     }
                 }
@@ -74,7 +74,7 @@ class NotificationInteractor(private val context: Context?) {
             }
         }
 
-    private fun createNotification(title: String, message: String, task: Task?) {
+    private fun createNotification(title: String?, message: String?, task: Task?) {
 
         Log.d("Notification MESSAGE", "createNotification() is called")
 

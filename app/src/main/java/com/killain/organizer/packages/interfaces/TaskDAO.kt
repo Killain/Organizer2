@@ -36,10 +36,10 @@ interface TaskDAO {
             "task_date = :task_date, task_time = :time, " +
             "task_is_completed = :isCompleted, is_notification_showed = :isNotificationShowed, " +
             "is_deleted = :isDeleted, has_reference = :hasReference WHERE task_string = :old_text")
-    fun customUpdateTask(text_string: String,
-                         task_date: Long, time: String,
-                         isCompleted: Boolean, isNotificationShowed: Boolean,
-                         isDeleted: Boolean, hasReference: Boolean, old_text: String)
+    fun customUpdateTask(text_string: String?,
+                         task_date: Long?, time: String?,
+                         isCompleted: Boolean?, isNotificationShowed: Boolean?,
+                         isDeleted: Boolean?, hasReference: Boolean?, old_text: String?)
 
     @Query("SELECT * FROM task WHERE task_date = :date AND task_is_completed == 0 AND is_deleted == 0")
     fun getAllTasksByDate(date: Long): List<Task>?

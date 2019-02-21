@@ -8,6 +8,6 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val refWatcher = LeakCanary.install(this)
+        LeakCanary.install(this)
     }
 }

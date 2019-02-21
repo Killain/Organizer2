@@ -13,8 +13,8 @@ import com.killain.organizer.packages.interfaces.SubTaskDAO
 import com.killain.organizer.packages.interfaces.TaskDAO
 import com.killain.organizer.packages.models.SubTask
 import com.killain.organizer.packages.models.Task
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.IO
 import java.util.ArrayList
 import javax.inject.Inject
 import kotlin.NullPointerException
@@ -49,40 +49,59 @@ class DataManager(val context: Context) {
     }
 
     fun getUndeletedTasks() : MutableList<Task?>?  {
-            if (::taskDAO.isInitialized) {
-                taskList = taskDAO.getUndeletedTasks()
-                return taskList as MutableList<Task?>?
-            } else {
-                throwTaskDAOException()
-                return null
+        return if (::taskDAO.isInitialized) {
+            runBlocking {
+                taskList = withContext(IO) {
+                    taskDAO.getUndeletedTasks()
+                }
+//                    taskList = taskDAO.getUndeletedTasks()
+//                    return taskList as MutableList<Task?>?
             }
+            taskList as MutableList<Task?>?
+
+        } else {
+            throwTaskDAOException()
+            null
+        }
     }
 
     fun getTasksByState(isCompleted: Boolean, isDeleted: Boolean): ArrayList<Task>? {
-        if (::taskDAO.isInitialized) {
-            taskList = taskDAO.getAllTasksByState(isCompleted, isDeleted)
-            return taskList as ArrayList<Task>?
+        return if (::taskDAO.isInitialized) {
+            runBlocking {
+                taskList = withContext(IO) {
+                    taskDAO.getAllTasksByState(isCompleted, isDeleted)
+                }
+            }
+            taskList as ArrayList<Task>?
         } else {
             throwTaskDAOException()
-            return null
+            null
         }
     }
 
     fun updateTask(task: Task?) {
         if (::taskDAO.isInitialized) {
-            taskDAO.updateTask(task)
+            runBlocking {
+                withContext(IO) {
+                    taskDAO.updateTask(task)
+                }
+            }
         } else {
             throwTaskDAOException()
         }
     }
 
-    fun customUpdateTask(task: Task, oldText: String) {
+    fun customUpdateTask(task: Task?, oldText: String) {
         if (::taskDAO.isInitialized) {
-            taskDAO.customUpdateTask(task.task_string,
-                    task.date, task.time,
-                    task.isCompleted, task.isNotificationShowed,
-                    task.isDeleted, task.isHasReference,
-                    oldText)
+            runBlocking {
+                withContext(IO) {
+                    taskDAO.customUpdateTask(task?.task_string,
+                            task?.date, task?.time,
+                            task?.isCompleted, task?.isNotificationShowed,
+                            task?.isDeleted, task?.isHasReference,
+                            oldText)
+                }
+            }
         } else {
             throwTaskDAOException()
         }
@@ -90,7 +109,11 @@ class DataManager(val context: Context) {
 
     fun addTask(task: Task) {
         if (::taskDAO.isInitialized) {
-            taskDAO.addTask(task)
+            runBlocking {
+                withContext(IO) {
+                    taskDAO.addTask(task)
+                }
+            }
         } else {
             throwTaskDAOException()
         }
@@ -98,7 +121,11 @@ class DataManager(val context: Context) {
 
     fun addSubTask(subTask: SubTask?) {
         if (::subTaskDAO.isInitialized) {
-            subTaskDAO.addSubTask(subTask)
+            runBlocking {
+                withContext(IO) {
+                    subTaskDAO.addSubTask(subTask)
+                }
+            }
         } else {
             throwSubTaskDAOException()
         }
@@ -106,7 +133,11 @@ class DataManager(val context: Context) {
 
     fun updateSubTask(subTask: SubTask?) {
         if (::subTaskDAO.isInitialized) {
-            subTaskDAO.updateSubTask(subTask)
+            runBlocking {
+                withContext(IO) {
+                    subTaskDAO.updateSubTask(subTask)
+                }
+            }
         } else {
             throwSubTaskDAOException()
         }
@@ -114,7 +145,11 @@ class DataManager(val context: Context) {
 
     fun deleteSubTask(subTask: SubTask?) {
         if (::subTaskDAO.isInitialized) {
-            subTaskDAO.deleteSubTask(subTask)
+            runBlocking {
+                withContext(IO) {
+                    subTaskDAO.deleteSubTask(subTask)
+                }
+            }
         } else {
             throwSubTaskDAOException()
         }
@@ -122,7 +157,11 @@ class DataManager(val context: Context) {
 
     fun deleteTask(task: Task?) {
         if (::taskDAO.isInitialized) {
-            taskDAO.deleteTask(task)
+            runBlocking {
+                withContext(IO) {
+                    taskDAO.deleteTask(task)
+                }
+            }
         } else {
             throwTaskDAOException()
         }
@@ -133,22 +172,30 @@ class DataManager(val context: Context) {
     }
 
     fun getSubTasksByReference(reference: String): ArrayList<SubTask>? {
-        if (::subTaskDAO.isInitialized) {
-            subTaskList = subTaskDAO.getSubTasksByReference(reference)
-            return subTaskList as ArrayList<SubTask>?
+        return if (::subTaskDAO.isInitialized) {
+                runBlocking {
+                    subTaskList = withContext(IO) {
+                        subTaskDAO.getSubTasksByReference(reference)
+                    }
+            }
+            subTaskList as ArrayList<SubTask>?
         } else {
             throwSubTaskDAOException()
-            return null
+            null
         }
     }
 
     fun getAllTasksByDate(date: Long): MutableList<Task?>? {
-        if (::taskDAO.isInitialized) {
-            taskList = taskDAO.getAllTasksByDate(date)
-            return taskList as? MutableList<Task?>
+        return if (::taskDAO.isInitialized) {
+            runBlocking {
+                taskList = withContext(IO) {
+                    taskDAO.getAllTasksByDate(date)
+                }
+            }
+            taskList as? MutableList<Task?>
         } else {
             throwTaskDAOException()
-            return null
+            null
         }
     }
 

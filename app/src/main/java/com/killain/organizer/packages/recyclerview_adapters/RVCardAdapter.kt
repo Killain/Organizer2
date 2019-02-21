@@ -68,13 +68,13 @@ class RVCardAdapter(private val context: Context,
         task = arrayList?.get(position)
 
         if (task?.isHasReference!!) {
-            val RVSubTask = RVSubTask(context, task)
+            val rvSubTask = RVSubTask(context, task)
             holder.recyclerView?.visibility = View.VISIBLE
-            holder.recyclerView?.adapter = RVSubTask
+            holder.recyclerView?.adapter = rvSubTask
             holder.cardEditTextUpper?.setText(task?.task_string)
             holder.cardEditTextUpper?.isEnabled = false
             //            holder.cardDate.setText(task.getDate());
-            holder.cardDate?.text = dateHelper.getConvertedDateFromLong(task!!.date)
+            holder.cardDate?.text = dateHelper.getConvertedDateFromLong(task?.date)
             holder.cardTime?.text = task?.time
         } else {
             holder.cardEditTextUpper?.setText(task!!.task_string)
@@ -110,14 +110,14 @@ class RVCardAdapter(private val context: Context,
         }
 
         holder.editButton?.setOnClickListener {
-            fragment!!.callDialogFragment(DialogType.EDIT_EXISTING_TASK,
+            fragment?.callDialogFragment(DialogType.EDIT_EXISTING_TASK,
                     fragmentUIHandler,
-                    task!!.date, task)
+                    task!!.date!!, task)
         }
     }
 
     override fun getItemCount(): Int {
-        return if (arrayList!!.size != 0) {
+        return if (arrayList?.size != 0) {
             arrayList!!.size
         } else {
             0

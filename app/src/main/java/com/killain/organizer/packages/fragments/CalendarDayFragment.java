@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Toast;
+
 import com.killain.organizer.R;
 import com.killain.organizer.packages.enums.AdapterRefreshType;
 import com.killain.organizer.packages.enums.DialogType;
@@ -107,12 +109,17 @@ public class CalendarDayFragment extends Fragment implements FragmentUIHandler, 
 
     @Override
     public void onClick(View v) {
-        AddTaskDialogFragment dialog = new AddTaskDialogFragment();
-        dialog.setListener(this);
-        dialog.setDialogType(DialogType.ADD_NEW_TASK);
-        dialog.setDate(localDate);
-        if (getFragmentManager() != null) {
-            dialog.show(getFragmentManager(), "dialog");
+        try {
+            AddTaskDialogFragment dialog = new AddTaskDialogFragment();
+            dialog.setListener(this);
+            dialog.setDialogType(DialogType.ADD_NEW_TASK);
+            dialog.setDate(localDate);
+            if (getFragmentManager() != null) {
+                dialog.show(getFragmentManager(), "dialog");
+            }
+        }
+        catch (Exception e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
