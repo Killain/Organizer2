@@ -15,13 +15,13 @@ class TaskInteractor(context: Context) {
     var subTaskArray: ArrayList<SubTask>? = null
     private val newArrayList: ArrayList<SubTask?> = ArrayList()
 
-    fun createTask(taskText: String,
-                   taskDate: Long,
-                   taskTime: String,
-                   isNotificationShowed: Boolean,
-                   taskCompleted: Boolean,
+    fun createTask(taskText: String?,
+                   taskDate: Long?,
+                   taskTime: String?,
+                   isNotificationShowed: Boolean?,
+                   taskCompleted: Boolean?,
                    subTaskArray: ArrayList<SubTask>?,
-                   dialogType: DialogType): Task? {
+                   dialogType: DialogType?): Task? {
 
         this.subTaskArray = subTaskArray
 

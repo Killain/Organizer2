@@ -31,14 +31,14 @@ class DateHelper {
             return result as String
         }
 
-    val year: Int
-        get() = localDate!!.year
+    val year: Int?
+        get() = localDate?.year
 
-    val dayOfMonth: Int
-        get() = localDate!!.dayOfMonth
+    val dayOfMonth: Int?
+        get() = localDate?.dayOfMonth
 
-    val long: Long
-        get() = localDate!!.toEpochDay()
+    val long: Long?
+        get() = localDate?.toEpochDay()
 
     init {
         localDate = LocalDate.now()
@@ -120,7 +120,7 @@ class DateHelper {
         time = this.hour + ":" + this.minute
     }
 
-    fun getMonth(): Int {
+    fun getMonth(): Int? {
         return localDate!!.monthValue
     }
 
